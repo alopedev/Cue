@@ -94,7 +94,7 @@
         var body: some View {
             VStack(spacing: CueSpacing.space4) {
                 Button("Recomiéndame") {}.buttonStyle(CueButtonStyle(.primary, size: .large))
-                HStack(spacing: CueSpacing.space3) {
+                CueButtonRow {
                     Button("Marcar visto") {}.buttonStyle(.cuePrimary)
                     Button("Ahora no") {}.buttonStyle(.cueSecondary)
                 }

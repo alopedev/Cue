@@ -65,6 +65,7 @@ private struct CueButtonBody: View {
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.isEnabled) private var isEnabled
+    @Environment(\.cueButtonFillsRowCell) private var fillsRowCell
 
     var body: some View {
         let motion = PressMotion(
@@ -78,7 +79,11 @@ private struct CueButtonBody: View {
             .multilineTextAlignment(.center)
             .padding(.horizontal, size.horizontalPadding)
             .padding(.vertical, CueSpacing.space2)
-            .frame(minWidth: size.minimumWidth, minHeight: size.minimumHeight)
+            .frame(
+                minWidth: size.minimumWidth,
+                maxWidth: fillsRowCell ? .infinity : nil,
+                minHeight: size.minimumHeight
+            )
             .fixedSize(horizontal: false, vertical: true)
             .background(Capsule().fill(colors.fill))
             .contentShape(Capsule())
