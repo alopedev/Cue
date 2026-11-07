@@ -59,7 +59,7 @@
 
         var body: some View {
             LazyVGrid(
-                columns: [GridItem(.adaptive(minimum: 100), spacing: CueSpacing.space2)],
+                columns: Array(repeating: GridItem(.flexible(), spacing: CueSpacing.space2), count: 2),
                 spacing: CueSpacing.space2
             ) {
                 ForEach(swatches, id: \.name) { swatch in
