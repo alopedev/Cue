@@ -10,7 +10,7 @@ struct RootView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: CueSpacing.lg) {
+            VStack(spacing: CueSpacing.space6) {
                 Text("Cue")
                     .cueTextStyle(.display)
                     .accessibilityIdentifier("root.title")

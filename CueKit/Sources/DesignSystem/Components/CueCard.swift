@@ -14,7 +14,7 @@ public struct CueCard<Content: View>: View {
 
     /// Corner radius for a shape nested inside the card's padding.
     public static var innerRadius: CGFloat {
-        CueRadius.concentric(outer: CueRadius.large, inset: CueSpacing.md)
+        CueRadius.concentric(outer: CueRadius.large, inset: CueSpacing.space4)
     }
 
     let style: Style
@@ -29,7 +29,7 @@ public struct CueCard<Content: View>: View {
         let shape = RoundedRectangle(cornerRadius: CueRadius.large, style: .continuous)
         content
             .foregroundStyle(colors.text)
-            .padding(CueSpacing.md)
+            .padding(CueSpacing.space4)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(shape.fill(colors.fill))
             .containerShape(shape)
@@ -39,10 +39,10 @@ public struct CueCard<Content: View>: View {
             .padding(.bottom, CueDepth.card)
     }
 
-    private var colors: (fill: Color, text: Color, edge: Color) {
+    private var colors: PieceColors {
         switch style {
-        case .ticket: (CueColor.ticket, CueColor.onTicket, CueColor.ticketEdge)
-        case .surface: (CueColor.surface, CueColor.ink, CueColor.softEdge)
+        case .ticket: PieceColors(fill: CueColor.ticket, text: CueColor.onTicket, edge: CueColor.ticketEdge)
+        case .surface: PieceColors(fill: CueColor.surface, text: CueColor.ink, edge: CueColor.softEdge)
         }
     }
 }

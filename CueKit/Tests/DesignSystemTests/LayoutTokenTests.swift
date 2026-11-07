@@ -8,8 +8,8 @@ struct LayoutTokenTests {
     func spacingScale() {
         #expect(
             [
-                CueSpacing.xxs, CueSpacing.xs, CueSpacing.sm, CueSpacing.md,
-                CueSpacing.lg, CueSpacing.xl, CueSpacing.xxl,
+                CueSpacing.space1, CueSpacing.space2, CueSpacing.space3, CueSpacing.space4,
+                CueSpacing.space6, CueSpacing.space8, CueSpacing.space12,
             ] == [4, 8, 12, 16, 24, 32, 48]
         )
     }
@@ -21,7 +21,7 @@ struct LayoutTokenTests {
 
     @Test("An inner corner is the outer corner minus the padding between them")
     func concentricRadius() {
-        #expect(CueRadius.concentric(outer: CueRadius.large, inset: CueSpacing.md) == 12)
+        #expect(CueRadius.concentric(outer: CueRadius.large, inset: CueSpacing.space4) == 12)
     }
 
     @Test("An inner corner never goes below zero")

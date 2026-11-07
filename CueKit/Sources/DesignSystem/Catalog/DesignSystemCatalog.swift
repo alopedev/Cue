@@ -7,7 +7,7 @@
 
         public var body: some View {
             ScrollView {
-                VStack(alignment: .leading, spacing: CueSpacing.lg) {
+                VStack(alignment: .leading, spacing: CueSpacing.space6) {
                     Text("¿Qué vemos hoy?").cueTextStyle(.display)
                     CatalogSection("Colores") { CatalogSwatches() }
                     CatalogSection("Letras") { CatalogTypography() }
@@ -15,8 +15,8 @@
                     CatalogSection("Tarjetas") { CatalogCards() }
                 }
                 .foregroundStyle(CueColor.ink)
-                .padding(.horizontal, CueSpacing.md)
-                .padding(.vertical, CueSpacing.xl)
+                .padding(.horizontal, CueSpacing.space4)
+                .padding(.vertical, CueSpacing.space8)
             }
             .background(CueColor.canvas)
         }
@@ -32,33 +32,42 @@
         }
 
         var body: some View {
-            VStack(alignment: .leading, spacing: CueSpacing.sm) {
+            VStack(alignment: .leading, spacing: CueSpacing.space3) {
                 Text(title).cueTextStyle(.title).accessibilityAddTraits(.isHeader)
                 content
             }
         }
     }
 
+    private struct Swatch {
+        let name: String
+        let fill: Color
+        let text: Color
+    }
+
     private struct CatalogSwatches: View {
-        private let swatches: [(String, Color, Color)] = [
-            ("canvas", CueColor.canvas, CueColor.ink),
-            ("surface", CueColor.surface, CueColor.ink),
-            ("surface-sunken", CueColor.surfaceSunken, CueColor.ink),
-            ("cue", CueColor.cue, CueColor.onCue),
-            ("ticket", CueColor.ticket, CueColor.onTicket),
-            ("stage", CueColor.stage, CueColor.onTicket),
-            ("success", CueColor.success, CueColor.surface),
-            ("danger", CueColor.danger, CueColor.surface),
+        private let swatches: [Swatch] = [
+            Swatch(name: "canvas", fill: CueColor.canvas, text: CueColor.ink),
+            Swatch(name: "surface", fill: CueColor.surface, text: CueColor.ink),
+            Swatch(name: "surface-sunken", fill: CueColor.surfaceSunken, text: CueColor.ink),
+            Swatch(name: "cue", fill: CueColor.cue, text: CueColor.onCue),
+            Swatch(name: "ticket", fill: CueColor.ticket, text: CueColor.onTicket),
+            Swatch(name: "stage", fill: CueColor.stage, text: CueColor.onTicket),
+            Swatch(name: "success", fill: CueColor.success, text: CueColor.surface),
+            Swatch(name: "danger", fill: CueColor.danger, text: CueColor.surface),
         ]
 
         var body: some View {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 100), spacing: CueSpacing.xs)], spacing: CueSpacing.xs) {
-                ForEach(swatches, id: \.0) { name, fill, text in
-                    Text(name)
+            LazyVGrid(
+                columns: [GridItem(.adaptive(minimum: 100), spacing: CueSpacing.space2)],
+                spacing: CueSpacing.space2
+            ) {
+                ForEach(swatches, id: \.name) { swatch in
+                    Text(swatch.name)
                         .cueTextStyle(.caption)
-                        .foregroundStyle(text)
+                        .foregroundStyle(swatch.text)
                         .frame(maxWidth: .infinity, minHeight: 56)
-                        .background(fill, in: RoundedRectangle(cornerRadius: CueRadius.small))
+                        .background(swatch.fill, in: RoundedRectangle(cornerRadius: CueRadius.small))
                         .overlay(RoundedRectangle(cornerRadius: CueRadius.small).stroke(CueColor.line))
                 }
             }
@@ -67,7 +76,7 @@
 
     private struct CatalogTypography: View {
         var body: some View {
-            VStack(alignment: .leading, spacing: CueSpacing.xs) {
+            VStack(alignment: .leading, spacing: CueSpacing.space2) {
                 Text("Biblioteca").cueTextStyle(.title)
                 Text("Título de ejemplo").cueTextStyle(.ticketTitle)
                 Text("Cabe en tu hora y la dejaste hace 3 días.").cueTextStyle(.why)
@@ -83,9 +92,9 @@
 
     private struct CatalogButtons: View {
         var body: some View {
-            VStack(alignment: .leading, spacing: CueSpacing.sm) {
+            VStack(alignment: .leading, spacing: CueSpacing.space3) {
                 Button("Recomiéndame") {}.buttonStyle(CueButtonStyle(.primary, fillsWidth: true))
-                HStack(spacing: CueSpacing.sm) {
+                HStack(spacing: CueSpacing.space3) {
                     Button("Marcar visto") {}.buttonStyle(.cuePrimary)
                     Button("Ahora no") {}.buttonStyle(.cueSecondary)
                 }
@@ -96,9 +105,9 @@
 
     private struct CatalogCards: View {
         var body: some View {
-            VStack(spacing: CueSpacing.md) {
+            VStack(spacing: CueSpacing.space4) {
                 CueCard(.ticket) {
-                    VStack(alignment: .leading, spacing: CueSpacing.sm) {
+                    VStack(alignment: .leading, spacing: CueSpacing.space3) {
                         ConcentricRectangle()
                             .fill(CueColor.onTicket.opacity(0.85))
                             .frame(height: 120)
@@ -112,7 +121,7 @@
                 }
                 .accessibilityElement(children: .combine)
                 CueCard(.surface) {
-                    VStack(alignment: .leading, spacing: CueSpacing.xxs) {
+                    VStack(alignment: .leading, spacing: CueSpacing.space1) {
                         Text("Tarjeta normal").cueTextStyle(.label)
                         Text("Para fichas y celdas sobre el fondo.").cueTextStyle(.body)
                             .foregroundStyle(CueColor.inkMuted)

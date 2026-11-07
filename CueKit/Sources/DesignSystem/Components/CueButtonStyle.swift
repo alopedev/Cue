@@ -50,8 +50,8 @@ private struct CueButtonBody: View {
             .cueTextStyle(.label)
             .foregroundStyle(colors.text)
             .multilineTextAlignment(.center)
-            .padding(.horizontal, CueSpacing.lg)
-            .padding(.vertical, CueSpacing.sm)
+            .padding(.horizontal, CueSpacing.space6)
+            .padding(.vertical, CueSpacing.space3)
             .frame(maxWidth: fillsWidth ? .infinity : nil, minHeight: Self.minimumHeight)
             .background(Capsule().fill(colors.fill))
             .contentShape(Capsule())
@@ -64,10 +64,10 @@ private struct CueButtonBody: View {
             .animation(motion.animation, value: configuration.isPressed)
     }
 
-    private var colors: (fill: Color, text: Color, edge: Color) {
+    private var colors: PieceColors {
         switch prominence {
-        case .primary: (CueColor.cue, CueColor.onCue, CueColor.cueEdge)
-        case .secondary: (CueColor.surfaceSunken, CueColor.ink, CueColor.softEdge)
+        case .primary: PieceColors(fill: CueColor.cue, text: CueColor.onCue, edge: CueColor.cueEdge)
+        case .secondary: PieceColors(fill: CueColor.surfaceSunken, text: CueColor.ink, edge: CueColor.softEdge)
         }
     }
 }
