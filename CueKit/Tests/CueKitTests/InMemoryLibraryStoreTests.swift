@@ -5,7 +5,7 @@ import Testing
 
 @Suite("InMemoryLibraryStore")
 struct InMemoryLibraryStoreTests {
-    let store = InMemoryLibraryStore()
+    let store: any LibraryStore = InMemoryLibraryStore()
 
     @Test("§4.4: saving the same series twice keeps one tracking, the latest")
     func seriesTrackingIsUnique() async throws {
