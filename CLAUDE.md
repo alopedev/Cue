@@ -14,13 +14,16 @@ App de iPhone (iOS 27, SwiftUI) para llevar el registro de series y películas y
 Eres el **orquestador y revisor**. Repartes el trabajo a subagentes y revisas lo que devuelven antes de aceptarlo.
 
 1. Trabaja **por bloques**. Un bloque es una funcionalidad que Àlex puede probar, y es **una PR**.
-2. Para cada bloque: `/grill-with-docs` → `/to-spec` → `/to-tickets` → construcción → ronda de revisión → PR.
-3. Cada tarea la construye un subagente con `/tdd` (prueba que falla, mínimo para pasar, refactor). Como mucho **6 subagentes a la vez** (decidido el 07/11/2026), cada uno en su worktree, y solo en tareas que no tocan los mismos archivos. Nunca dos subagentes a la vez sobre el archivo del proyecto de Xcode (`.pbxproj`).
-4. Revisa cada tarea al recibirla: las pruebas pasan, hace lo que pide su ticket y no añade nada que no se pidió.
-5. Al cerrar el bloque, ejecuta `/code-review` (de mattpocock-skills) y `/security-review`. Arregla todo lo grave antes de abrir la PR.
-6. Cada 3 o 4 bloques, propón a Àlex pasar `/improve-codebase-architecture`.
-7. La PR lleva capturas del simulador de cada pantalla nueva o cambiada, y una lista corta de qué probar.
-8. **Tú fusionas la PR** (decidido el 07/11/2026), solo cuando la revisión de GitHub está en verde y `/code-review` y `/security-review` no dejan nada grave. Usa *squash merge* y borra la rama. Después, avisa a Àlex con la lista de qué probar.
+2. Para cada bloque: preguntas → especificación → tareas → construcción → revisión → PR → fusión. Detalle abajo.
+3. **Preguntas**: lee el PRD y el código, y pregunta a Àlex solo lo que no esté decidido. Una ronda de preguntas numeradas, cada una con tu recomendación. Lo que el código o el PRD ya responden no se pregunta.
+4. **Especificación**: un issue en GitHub con qué hace el bloque, cómo lo prueba Àlex (criterios de aceptación), qué queda fuera y qué decisiones se tomaron.
+5. **Tareas**: parte el bloque en issues pequeños enlazados al de la especificación. Cada tarea atraviesa la app de punta a punta (datos, lógica y pantalla) siempre que se pueda, y dice qué otras tareas tienen que acabar antes.
+6. **Construcción**: cada tarea la construye un subagente con TDD (ver «Pruebas»). Como mucho **6 subagentes a la vez** (decidido el 07/11/2026), cada uno en su worktree, y solo en tareas que no tocan los mismos archivos. Nunca dos subagentes a la vez sobre el archivo del proyecto de Xcode (`.pbxproj`).
+7. **Revisión de cada tarea** al recibirla: las pruebas pasan, hace lo que pide su issue y no añade nada que no se pidió.
+8. **Revisión del bloque**: `scripts/verify.sh` en verde, luego `/code-review` y `/security-review` de Claude Code. Comprueba también que el código cumple «Código» y que el bloque cumple su especificación. Arregla todo lo grave antes de abrir la PR.
+9. La PR lleva capturas del simulador de cada pantalla nueva o cambiada, y una lista corta de qué probar.
+10. **Tú fusionas la PR** (decidido el 07/11/2026), solo cuando la revisión de GitHub está en verde y las revisiones no dejan nada grave. Usa *squash merge* y borra la rama. Después, avisa a Àlex con la lista de qué probar.
+11. Cada 3 o 4 bloques, haz una revisión de arquitectura: busca módulos que se han enredado o que cuesta probar, y propón a Àlex los cambios antes de hacerlos.
 
 ## Estructura y comandos
 
@@ -34,15 +37,20 @@ Eres el **orquestador y revisor**. Repartes el trabajo a subagentes y revisas lo
 
 ## Pruebas
 
-- **TDD estricto en la lógica**: modelo, biblioteca, reglas, motor de recomendación, sincronización. Acuerda las costuras (seams) que se prueban antes de escribir pruebas, como pide `/tdd`.
-- **Pantallas**: capturas en el simulador y pruebas de interfaz solo en los recorridos importantes. Sin pruebas tautológicas.
+- **TDD estricto en la lógica**: modelo, biblioteca, reglas, motor de recomendación, sincronización. Ciclo rojo → verde → refactor: una prueba que falla, lo mínimo para que pase, ordenar el código. Prueba el comportamiento a través de la interfaz pública del módulo, no sus detalles internos, y decide antes qué puntos de entrada se prueban.
+- **Pantallas**: capturas en el simulador y pruebas de interfaz solo en los recorridos importantes. Sin pruebas que no comprueban nada real.
+- Las dependencias externas (TMDB, Trakt, almacenamiento, la hora) se sustituyen en las pruebas por versiones falsas detrás de sus contratos (`protocol`).
 - La lógica vive en un paquete Swift local separado de la app, para que sus pruebas corran sin simulador.
 - Pasa las pruebas del archivo que tocas a menudo, y todas al final de cada tarea.
 
 ## Código
 
 - Código, nombres y comentarios en **inglés**. Textos de la app en **castellano**.
-- Usa los términos de `CONTEXT.md`. Si falta uno, añádelo con `/domain-modeling` en vez de inventar sinónimos.
+- Usa los términos de `CONTEXT.md` (glosario castellano ↔ inglés). Si falta uno, añádelo ahí en vez de inventar sinónimos.
+- Funciones y tipos pequeños con un solo propósito. Nombres que explican qué hacen, sin abreviaturas.
+- La app es delgada: muestra datos y pasa los toques a `CueKit`. Las reglas viven en `CueKit`.
+- Sin `!` para forzar opcionales ni `try!`; los errores se tratan o se propagan.
+- Sin dependencias de terceros dentro de la app; solo herramientas de desarrollo.
 - Ninguna clave (TMDB, Trakt) entra en el repo, que es público.
 
 ## Decisiones
@@ -50,16 +58,7 @@ Eres el **orquestador y revisor**. Repartes el trabajo a subagentes y revisas lo
 - Si una tarea depende de algo sin decidir (PRD §10.2, por ejemplo D-04 o D-07, o cualquier hueco del PRD), **para y pregunta a Àlex**. No supongas.
 - Las decisiones difíciles de cambiar se apuntan como ADR en `docs/adr/`.
 
-## Agent skills
+## Issues y documentos
 
-### Issue tracker
-
-Issues y tareas en GitHub Issues de `alopedev/cue`, con bloqueos nativos entre ellas. See `docs/agents/issue-tracker.md`.
-
-### Triage labels
-
-Etiquetas por defecto de mattpocock-skills (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). See `docs/agents/triage-labels.md`.
-
-### Domain docs
-
-Single-context: un `CONTEXT.md` y `docs/adr/` en la raíz. See `docs/agents/domain.md`.
+- Especificaciones y tareas en GitHub Issues de `alopedev/cue`, con `gh`. Las tareas se enlazan a su especificación y entre sí con los bloqueos nativos de GitHub.
+- Glosario en `CONTEXT.md` y decisiones difíciles de cambiar en `docs/adr/`, ambos en la raíz. Léelos antes de tocar un área; créalos cuando haga falta el primer término o la primera decisión.

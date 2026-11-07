@@ -1,6 +1,6 @@
 # Cómo se programa Cue
 
-Decidido por Àlex en una entrevista el 01/11/2026. Este documento explica el método en lenguaje llano. Las reglas exactas para los agentes están en [`CLAUDE.md`](../CLAUDE.md).
+Decidido por Àlex en una entrevista el 01/11/2026 y actualizado el 07/11/2026 (sin las skills de Matt Pocock, que resultaban demasiado complicadas). Este documento explica el método en lenguaje llano. Las reglas exactas para los agentes están en [`CLAUDE.md`](../CLAUDE.md).
 
 ## En una frase
 
@@ -21,21 +21,19 @@ En el Mac de Àlex (última versión de Xcode), en una sesión **local** de Clau
 
 ## El camino de cada bloque
 
-Sigue el método de Matt Pocock ([mattpocock/skills](https://github.com/mattpocock/skills)):
-
-1. **Entrevista** (`/grill-with-docs`): Claude pregunta hasta que no quede nada en el aire. Lo que se aclara se apunta en el glosario (`CONTEXT.md`) y, si es una decisión difícil de cambiar, en `docs/adr/`.
-2. **Especificación** (`/to-spec`): la entrevista se convierte en una descripción del bloque, publicada como issue en GitHub.
-3. **Tareas** (`/to-tickets`): el bloque se parte en tareas pequeñas. Cada tarea atraviesa la app de punta a punta (datos, lógica y pantalla) y dice qué otras tareas tienen que acabar antes. Van como issues en GitHub.
-4. **Construcción**: el orquestador da cada tarea a un subagente, que la hace con `/tdd`: escribe una prueba que falla, escribe lo mínimo para que pase, ordena el código, y repite.
-5. **Ronda de calidad y seguridad**: `/code-review` de Matt (¿sigue las normas del repo? ¿hace lo que pedía la especificación?) y `/security-review` de Claude Code (¿hay fallos de seguridad, por ejemplo claves mal guardadas?).
+1. **Preguntas**: Claude lee el PRD y pregunta a Àlex solo lo que falte por decidir, en una ronda de preguntas numeradas con su recomendación. Las palabras nuevas se apuntan en el glosario (`CONTEXT.md`) y las decisiones difíciles de cambiar, en `docs/adr/`.
+2. **Especificación**: un issue en GitHub que dice qué hace el bloque, cómo lo probará Àlex y qué queda fuera.
+3. **Tareas**: el bloque se parte en tareas pequeñas. Cada tarea atraviesa la app de punta a punta (datos, lógica y pantalla) y dice qué otras tareas tienen que acabar antes. Van como issues en GitHub.
+4. **Construcción**: el orquestador da cada tarea a un subagente, que la hace con pruebas primero: escribe una prueba que falla, escribe lo mínimo para que pase, ordena el código, y repite.
+5. **Ronda de calidad y seguridad**: `scripts/verify.sh` en verde, y las revisiones de código (`/code-review`) y de seguridad (`/security-review`) de Claude Code: ¿sigue las normas del repo?, ¿hace lo que pedía la especificación?, ¿hay claves mal guardadas?
 6. **PR**: con capturas del simulador. Claude la fusiona cuando todo está en verde y Àlex prueba el resultado.
 
-Cada 3 o 4 bloques, además, `/improve-codebase-architecture` para que el código no se enrede.
+Cada 3 o 4 bloques, además, una revisión de arquitectura para que el código no se enrede.
 
 ## Reglas acordadas
 
 - **Un bloque = una funcionalidad que se puede probar = una PR.** Por ejemplo: «añadir una serie y verla en la biblioteca».
-- **TDD estricto en la lógica**: biblioteca, reglas, recomendación, sincronización. Las **pantallas** se comprueban con capturas en el simulador y algunas pruebas que usan la app como una persona. No se escriben pruebas de relleno que no comprueban nada real (la propia skill `/tdd` de Matt lo advierte).
+- **TDD estricto en la lógica**: biblioteca, reglas, recomendación, sincronización. Las **pantallas** se comprueban con capturas en el simulador y algunas pruebas que usan la app como una persona. No se escriben pruebas de relleno que no comprueban nada real.
 - **La lógica va separada de las pantallas**, en un paquete propio dentro del repo. Así sus pruebas tardan segundos y no necesitan el simulador.
 - **Código en inglés; la app, en castellano.** El glosario `CONTEXT.md` dice cómo se llama cada idea en los dos idiomas (por ejemplo «Esta noche» = `Tonight`).
 - **Subagentes: como mucho 6 a la vez** (decidido el 07/11/2026), y solo en tareas que no tocan los mismos archivos. Motivo: el archivo del proyecto de Xcode se rompe con facilidad si dos agentes lo cambian a la vez, y cada agente extra gasta más uso.
