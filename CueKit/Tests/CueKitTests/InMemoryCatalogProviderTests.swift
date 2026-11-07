@@ -7,7 +7,7 @@ struct InMemoryCatalogProviderTests {
     let catalog = InMemoryCatalogProvider(
         series: [SampleData.severanceDetails],
         movies: [SampleData.duneDetails],
-        popular: [.movie(SampleData.dune)]
+        popular: [SampleData.spain: [.movie(SampleData.dune)]]
     )
 
     @Test("Search finds series and movies by part of the title, ignoring case and accents")
@@ -17,9 +17,10 @@ struct InMemoryCatalogProviderTests {
         #expect(try await catalog.search("zzz", in: SampleData.spain).isEmpty)
     }
 
-    @Test("Popular returns the given list")
-    func popularReturnsGivenList() async throws {
+    @Test("Popular returns the list given for that country")
+    func popularDependsOnCountry() async throws {
         #expect(try await catalog.popular(in: SampleData.spain) == [.movie(SampleData.dune)])
+        #expect(try await catalog.popular(in: SampleData.unitedStates).isEmpty)
     }
 
     @Test("Details only include availability in the requested country")

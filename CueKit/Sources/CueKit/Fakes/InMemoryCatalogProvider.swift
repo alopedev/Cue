@@ -4,19 +4,19 @@ import Foundation
 public struct InMemoryCatalogProvider: CatalogProvider {
     private let series: [SeriesID: SeriesDetails]
     private let movies: [MovieID: MovieDetails]
-    private let popularItems: [CatalogItem]
+    private let popularByCountry: [CountryCode: [CatalogItem]]
     private let failure: CatalogError?
 
     /// When `failure` is set, every call throws it (for example, to simulate no connection).
     public init(
         series: [SeriesDetails] = [],
         movies: [MovieDetails] = [],
-        popular: [CatalogItem] = [],
+        popular: [CountryCode: [CatalogItem]] = [:],
         failure: CatalogError? = nil
     ) {
         self.series = Dictionary(series.map { ($0.series.id, $0) }, uniquingKeysWith: { _, last in last })
         self.movies = Dictionary(movies.map { ($0.movie.id, $0) }, uniquingKeysWith: { _, last in last })
-        self.popularItems = popular
+        self.popularByCountry = popular
         self.failure = failure
     }
 
@@ -31,7 +31,7 @@ public struct InMemoryCatalogProvider: CatalogProvider {
 
     public func popular(in country: CountryCode) async throws -> [CatalogItem] {
         try throwIfFailing()
-        return popularItems
+        return popularByCountry[country] ?? []
     }
 
     public func seriesDetails(for id: SeriesID, in country: CountryCode) async throws -> SeriesDetails {

@@ -27,6 +27,9 @@ public struct MovieWatch: Hashable, Sendable {
 }
 
 /// What comes from Trakt: watched episodes and movies, the watchlist and the ratings.
+///
+/// Marks, watches and ratings only include what changed since the requested date. The watchlist
+/// has no dates in Trakt, so it is always the whole current list.
 public struct SyncedHistory: Hashable, Sendable {
     public let episodeMarks: [EpisodeMark]
     public let movieWatches: [MovieWatch]
