@@ -1,0 +1,5 @@
+// Build settings for the Cue app target.
+// Keys (TMDB, Trakt) live in Secrets.xcconfig, which is never committed.
+// Copy Secrets.xcconfig.example to Secrets.xcconfig and fill it in.
+// The "?" makes the include optional, so the app still builds without it.
+#include? "Secrets.xcconfig"
