@@ -14,6 +14,7 @@ cd "$ROOT"
 
 SOURCES=(Cue CueUITests CueKit/Sources CueKit/Tests CueKit/Package.swift)
 DERIVED_DATA="${DERIVED_DATA:-$ROOT/.build/DerivedData}"
+RESULT_BUNDLE="$ROOT/.build/UITests.xcresult"
 
 step() { printf '\n==> %s\n' "$1"; }
 fail() { printf '\nFAIL: %s\n' "$1" >&2; exit 1; }
@@ -45,12 +46,14 @@ step "App: build and UI tests in the simulator"
 SIMULATOR="${CUE_SIMULATOR:-$(python3 scripts/pick_simulator.py)}"
 [[ -n "$SIMULATOR" ]] || fail "no iPhone simulator found. Install an iOS runtime in Xcode > Settings > Components"
 echo "Simulator: $SIMULATOR"
+rm -rf "$RESULT_BUNDLE"
 xcodebuild test \
     -project Cue.xcodeproj \
     -scheme Cue \
     -destination "platform=iOS Simulator,id=$SIMULATOR" \
     -derivedDataPath "$DERIVED_DATA" \
+    -resultBundlePath "$RESULT_BUNDLE" \
     CODE_SIGNING_ALLOWED=NO \
-    -quiet || fail "app build or UI tests"
+    -quiet || fail "app build or UI tests. Details: open $RESULT_BUNDLE in Xcode"
 
 printf '\nAll checks passed.\n'

@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   verify:
-    # Xcode 27 is only on GitHub's "xcode-27" image, still in preview.
+    # Xcode 27 is only on GitHub's "xcode-27" image (preview, has Xcode 27.2).
     # Switch to a macos-27 label once GitHub makes it generally available.
     runs-on: xcode-27
     timeout-minutes: 45
@@ -29,3 +29,11 @@ jobs:
 
       - name: Run scripts/verify.sh
         run: scripts/verify.sh
+
+      - name: Upload UI test results on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: UITests.xcresult
+          path: .build/UITests.xcresult
+          if-no-files-found: ignore

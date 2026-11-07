@@ -7,6 +7,7 @@ final class LaunchTests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
 
-        XCTAssertTrue(app.staticTexts["root.title"].waitForExistence(timeout: 5))
+        // Generous timeout: the first launch on a cold CI simulator is slow.
+        XCTAssertTrue(app.staticTexts["root.title"].waitForExistence(timeout: 30))
     }
 }
