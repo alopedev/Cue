@@ -18,7 +18,9 @@ public enum CueFonts {
         var error: Unmanaged<CFError>?
         if CTFontManagerRegisterFontsForURL(url as CFURL, .process, &error) { return }
         let cfError = error?.takeRetainedValue()
-        if let cfError, CFErrorGetCode(cfError) == CTFontManagerError.alreadyRegistered.rawValue {
+        if let cfError, CFErrorGetDomain(cfError) as String == kCTFontManagerErrorDomain as String,
+            CFErrorGetCode(cfError) == CTFontManagerError.alreadyRegistered.rawValue
+        {
             return
         }
         throw RegistrationError.rejected(cfError)

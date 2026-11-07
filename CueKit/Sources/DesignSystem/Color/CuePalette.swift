@@ -47,6 +47,7 @@ public enum CuePalette {
         TextPairing(name: "on-cue on cue", foreground: onCue, background: cue),
         TextPairing(name: "on-ticket on ticket", foreground: onTicket, background: ticket),
         TextPairing(name: "on-ticket-muted on ticket", foreground: onTicketMuted, background: ticket),
+        TextPairing(name: "on-ticket on stage (catalog label)", foreground: onTicket, background: stage),
         TextPairing(name: "success on surface", foreground: success, background: surface),
         TextPairing(name: "danger on surface", foreground: danger, background: surface),
     ]

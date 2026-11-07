@@ -36,6 +36,10 @@ public enum CueTextStyle: CaseIterable, Sendable {
     }
 
     public var font: Font {
+        usesFixedWidthDigits ? baseFont.monospacedDigit() : baseFont
+    }
+
+    private var baseFont: Font {
         switch self {
         case .display: titleFont(relativeTo: .largeTitle)
         case .title: titleFont(relativeTo: .title)
@@ -48,6 +52,11 @@ public enum CueTextStyle: CaseIterable, Sendable {
         case .minutes: .system(.subheadline, design: .monospaced, weight: .medium)
         case .minutesLarge: .system(.largeTitle, design: .monospaced, weight: .semibold)
         }
+    }
+
+    /// Durations line up when their digits all have the same width.
+    public var usesFixedWidthDigits: Bool {
+        self == .minutes || self == .minutesLarge
     }
 
     /// Letter spacing, in points at the base size.
@@ -67,6 +76,6 @@ public enum CueTextStyle: CaseIterable, Sendable {
 extension View {
     /// Applies a design-system text style.
     public func cueTextStyle(_ style: CueTextStyle) -> some View {
-        font(style.font).tracking(style.tracking).monospacedDigit()
+        font(style.font).tracking(style.tracking)
     }
 }

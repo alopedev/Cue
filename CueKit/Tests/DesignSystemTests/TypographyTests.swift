@@ -25,3 +25,12 @@ struct TypographyTests {
         }
     }
 }
+
+@Suite("Fixed-width digits")
+struct FixedWidthDigitTests {
+    @Test("Only durations use fixed-width digits")
+    func onlyDurations() {
+        let fixed = CueTextStyle.allCases.filter(\.usesFixedWidthDigits)
+        #expect(fixed == [.minutes, .minutesLarge])
+    }
+}
