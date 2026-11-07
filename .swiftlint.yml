@@ -1,0 +1,42 @@
+# SwiftLint rules for Cue. Thresholds come from the development plan (section 5).
+included:
+  - Cue
+  - CueUITests
+  - CueKit/Sources
+  - CueKit/Tests
+excluded:
+  - CueKit/.build
+
+# swift-format owns layout; turn off SwiftLint rules that disagree with it.
+disabled_rules:
+  - trailing_comma
+  - opening_brace
+
+opt_in_rules:
+  - empty_count
+  - first_where
+  - force_unwrapping
+  - implicitly_unwrapped_optional
+
+# Number of possible paths through a function.
+cyclomatic_complexity:
+  warning: 8
+  error: 11
+
+function_body_length:
+  warning: 40
+  error: 40
+
+file_length:
+  warning: 400
+  error: 400
+
+type_body_length:
+  warning: 300
+  error: 400
+
+line_length:
+  warning: 120
+  error: 160
+  ignores_comments: true
+  ignores_urls: true

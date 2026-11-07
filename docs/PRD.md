@@ -143,7 +143,7 @@ Los géneros de series están comprobados en la documentación de TMDB; los de p
 
 **MarcaEpisodio** **[cambiado]** — episodio, fecha y hora de marcado, origen (`manual` | `trakt` | `reconciliado`).
 
-**Puntuación** **[nuevo]** — serie o película, valor (escala en D-08), fecha, origen (`manual` | `trakt`).
+**Puntuación** **[nuevo]** — serie o película, valor de 1 a 10 (D-08), fecha, origen (`manual` | `trakt`).
 
 **Plataforma** — proveedor de streaming que el usuario declara tener contratado.
 
@@ -463,6 +463,7 @@ Este marco es una guía de diseño, no evidencia empírica de que el enfoque fun
 | D-03 | Variante de biblioteca | Rejilla de portadas; el tiempo restante va en la ficha | 01/11/2026 |
 | D-05 | Qué pasa tras rechazar las tres propuestas | Termina ahí, sin alternativa | 01/11/2026 |
 | D-06 | Modelo de negocio | Se decide antes de publicar; no bloquea la fase 1 | 01/11/2026 |
+| D-08 | Escala de puntuación | 1–10, la misma que Trakt, para no convertir | 07/11/2026 |
 | — | Películas | Entran en la fase 1 | 01/11/2026 |
 | — | Origen de las propuestas | La lista del usuario primero, luego «nuevo para ti» | 01/11/2026 |
 | — | Trakt | Sincronización en ambos sentidos, fase 1 (tanda B) | 01/11/2026 |
@@ -478,7 +479,6 @@ Un agente que necesite alguna de estas respuestas debe detenerse y preguntar.
 |---|---|---|---|
 | D-04 | Pesos iniciales de las señales de §6.5, incluido cómo comparar series con películas | — | Sin resolver. Requiere calibración manual con datos reales |
 | D-07 | Nombre del producto | — | «Cue» es provisional |
-| D-08 | Escala de puntuación | 1–5 estrellas / 1–10 | 1–10: es la escala de Trakt y evita conversiones |
 | D-09 | Conflictos de sincronización con Trakt | El cambio más reciente gana / Trakt gana / Cue gana | El más reciente gana; una sincronización nunca borra una marca de visto |
 | D-10 | Cuántas películas o series populares muestra la rejilla del alta | — | Sin resolver |
 | D-11 | Palabras clave de TMDB para los moods «romántica» y «miedo» en series | — | Sin resolver. Probar con datos reales |

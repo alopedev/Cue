@@ -38,8 +38,9 @@ Cada 3 o 4 bloques, además, `/improve-codebase-architecture` para que el códig
 - **TDD estricto en la lógica**: biblioteca, reglas, recomendación, sincronización. Las **pantallas** se comprueban con capturas en el simulador y algunas pruebas que usan la app como una persona. No se escriben pruebas de relleno que no comprueban nada real (la propia skill `/tdd` de Matt lo advierte).
 - **La lógica va separada de las pantallas**, en un paquete propio dentro del repo. Así sus pruebas tardan segundos y no necesitan el simulador.
 - **Código en inglés; la app, en castellano.** El glosario `CONTEXT.md` dice cómo se llama cada idea en los dos idiomas (por ejemplo «Esta noche» = `Tonight`).
-- **Subagentes: uno detrás de otro al principio.** Cuando la base esté montada, como mucho 2 o 3 a la vez, y solo en tareas que no tocan los mismos archivos. Motivo: el archivo del proyecto de Xcode se rompe con facilidad si dos agentes lo cambian a la vez, y cada agente extra gasta más uso.
-- **Revisión automática en GitHub**: cada PR pasa sola las pruebas en un Mac de GitHub. Si GitHub aún no tiene la versión de Xcode necesaria, se prueba solo en el Mac de Àlex hasta que la tenga.
+- **Subagentes: como mucho 6 a la vez** (decidido el 07/11/2026), y solo en tareas que no tocan los mismos archivos. Motivo: el archivo del proyecto de Xcode se rompe con facilidad si dos agentes lo cambian a la vez, y cada agente extra gasta más uso.
+- **Una sola orden lo comprueba todo**: `scripts/verify.sh` revisa el formato, las normas de estilo, las pruebas y cuánto código cubren. Tiene que salir en verde antes de cada PR.
+- **Revisión automática en GitHub**: cada PR pasa sola `scripts/verify.sh` en un Mac de GitHub. Si GitHub aún no tiene la versión de Xcode necesaria, se prueba solo en el Mac de Àlex hasta que la tenga.
 - **Las tareas viven en GitHub Issues** del repo, enlazadas entre sí con sus bloqueos.
 - **Si algo no está decidido, se pregunta.** Si una tarea choca con una decisión abierta del PRD (§10.2, por ejemplo D-04 o D-07), el agente se para y pregunta a Àlex. Nunca supone.
 - **Un bloque está terminado** cuando: todas las pruebas pasan, las revisiones no encuentran fallos graves, la PR trae capturas y Àlex lo ha probado.
