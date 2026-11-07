@@ -35,10 +35,11 @@ struct ColorContrastTests {
         }
     }
 
-    @Test("The focus ring stands out from every background (3:1 for non-text)")
+    // The ring is drawn outside the piece, on the screen background, never on the ticket.
+    @Test("The focus ring stands out from the screen backgrounds (3:1 for non-text)")
     func focusRingIsVisible() {
         for theme in Theme.allCases {
-            for background in [CuePalette.canvas, CuePalette.surface, CuePalette.ticket] {
+            for background in [CuePalette.canvas, CuePalette.surface] {
                 let ratio = CuePalette.focus.value(in: theme).contrastRatio(with: background.value(in: theme))
                 #expect(ratio >= 3, "focus in \(theme): \(ratio)")
             }

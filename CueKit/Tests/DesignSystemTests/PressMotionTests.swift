@@ -31,3 +31,16 @@ struct PressMotionTests {
         #expect(PressMotion(depth: 6, isPressed: true, reduceMotion: false).animation != nil)
     }
 }
+
+@Suite("Press motion feedback")
+struct PressMotionFeedbackTests {
+    @Test("With Reduce Motion a press dims the button so it still feels pressed")
+    func dimsWithReducedMotion() {
+        #expect(PressMotion(depth: 6, isPressed: true, reduceMotion: true).opacity < 1)
+    }
+
+    @Test("Without Reduce Motion the button keeps full opacity")
+    func fullOpacityNormally() {
+        #expect(PressMotion(depth: 6, isPressed: true, reduceMotion: false).opacity == 1)
+    }
+}

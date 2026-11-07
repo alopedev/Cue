@@ -7,7 +7,10 @@ struct LayoutTokenTests {
     @Test("Spacing follows the 4-point scale of the design system")
     func spacingScale() {
         #expect(
-            [CueSpacing.xxs, .xs, .sm, .md, .lg, .xl, .xxl] == [4, 8, 12, 16, 24, 32, 48]
+            [
+                CueSpacing.xxs, CueSpacing.xs, CueSpacing.sm, CueSpacing.md,
+                CueSpacing.lg, CueSpacing.xl, CueSpacing.xxl,
+            ] == [4, 8, 12, 16, 24, 32, 48]
         )
     }
 

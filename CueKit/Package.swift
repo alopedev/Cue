@@ -19,7 +19,11 @@ let package = Package(
     ],
     targets: [
         .target(name: "CueKit", swiftSettings: strictSettings),
-        .target(name: "DesignSystem", swiftSettings: strictSettings),
+        .target(
+            name: "DesignSystem",
+            resources: [.process("Resources")],
+            swiftSettings: strictSettings
+        ),
         .testTarget(
             name: "CueKitTests",
             dependencies: ["CueKit"],
