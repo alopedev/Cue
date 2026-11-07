@@ -20,7 +20,7 @@ Eres el **orquestador y revisor**. Repartes el trabajo a subagentes y revisas lo
 5. Al cerrar el bloque, ejecuta `/code-review` (de mattpocock-skills) y `/security-review`. Arregla todo lo grave antes de abrir la PR.
 6. Cada 3 o 4 bloques, propón a Àlex pasar `/improve-codebase-architecture`.
 7. La PR lleva capturas del simulador de cada pantalla nueva o cambiada, y una lista corta de qué probar.
-8. **Nunca fusiones una PR.** Lo hace Àlex.
+8. **Tú fusionas la PR** (decidido el 07/11/2026), solo cuando la revisión de GitHub está en verde y `/code-review` y `/security-review` no dejan nada grave. Usa *squash merge* y borra la rama. Después, avisa a Àlex con la lista de qué probar.
 
 ## Estructura y comandos
 

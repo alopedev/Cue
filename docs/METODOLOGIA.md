@@ -4,14 +4,14 @@ Decidido por Àlex en una entrevista el 01/11/2026. Este documento explica el m�
 
 ## En una frase
 
-Claude construye la app **por bloques**, siempre **con pruebas primero (TDD)**, con un **equipo de subagentes** que él coordina y revisa, y al final de cada bloque pasa una **ronda de calidad y seguridad**. Àlex prueba el resultado y da el «sí» final.
+Claude construye la app **por bloques**, siempre **con pruebas primero (TDD)**, con un **equipo de subagentes** que él coordina y revisa, y al final de cada bloque pasa una **ronda de calidad y seguridad**. Claude fusiona la PR y Àlex prueba el resultado.
 
 ## Quién hace qué
 
 | Quién | Qué hace |
 | --- | --- |
-| **Àlex** | Decide lo que no está decidido. Prueba cada bloque en el simulador o en su iPhone. Aprueba y fusiona cada PR. No necesita leer código. |
-| **Claude orquestador** (sesión de Claude Code Desktop en el Mac de Àlex) | Planifica, reparte tareas a los subagentes, revisa su trabajo, pasa las revisiones y abre la PR. |
+| **Àlex** | Decide lo que no está decidido. Prueba cada bloque en el simulador o en su iPhone. No necesita leer código. |
+| **Claude orquestador** (sesión de Claude Code Desktop en el Mac de Àlex) | Planifica, reparte tareas a los subagentes, revisa su trabajo, pasa las revisiones, abre la PR y la fusiona. |
 | **Subagentes** | Cada uno construye una tarea pequeña con TDD y devuelve el resultado al orquestador. |
 | **Proyecto Cue en Claude** (los hilos en la nube) | Planificar, entrevistar y decidir. No construye: desde la nube no se puede compilar ni abrir el simulador. |
 
@@ -28,7 +28,7 @@ Sigue el método de Matt Pocock ([mattpocock/skills](https://github.com/mattpoco
 3. **Tareas** (`/to-tickets`): el bloque se parte en tareas pequeñas. Cada tarea atraviesa la app de punta a punta (datos, lógica y pantalla) y dice qué otras tareas tienen que acabar antes. Van como issues en GitHub.
 4. **Construcción**: el orquestador da cada tarea a un subagente, que la hace con `/tdd`: escribe una prueba que falla, escribe lo mínimo para que pase, ordena el código, y repite.
 5. **Ronda de calidad y seguridad**: `/code-review` de Matt (¿sigue las normas del repo? ¿hace lo que pedía la especificación?) y `/security-review` de Claude Code (¿hay fallos de seguridad, por ejemplo claves mal guardadas?).
-6. **PR**: con capturas del simulador. Àlex la prueba y la fusiona.
+6. **PR**: con capturas del simulador. Claude la fusiona cuando todo está en verde y Àlex prueba el resultado.
 
 Cada 3 o 4 bloques, además, `/improve-codebase-architecture` para que el código no se enrede.
 
@@ -44,7 +44,7 @@ Cada 3 o 4 bloques, además, `/improve-codebase-architecture` para que el códig
 - **Las tareas viven en GitHub Issues** del repo, enlazadas entre sí con sus bloqueos.
 - **Si algo no está decidido, se pregunta.** Si una tarea choca con una decisión abierta del PRD (§10.2, por ejemplo D-04 o D-07), el agente se para y pregunta a Àlex. Nunca supone.
 - **Un bloque está terminado** cuando: todas las pruebas pasan, las revisiones no encuentran fallos graves, la PR trae capturas y Àlex lo ha probado.
-- **Àlex fusiona siempre.** Ningún agente fusiona PR.
+- **Claude fusiona las PR** (decidido el 07/11/2026), solo con la revisión de GitHub en verde y sin fallos graves en las revisiones. Si algo sale mal después, se deshace con una PR nueva.
 
 ## Orden de los primeros bloques
 
