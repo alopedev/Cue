@@ -1,0 +1,18 @@
+# macOS
+.DS_Store
+
+# Xcode
+xcuserdata/
+*.xcuserstate
+DerivedData/
+*.xcresult
+
+# Swift Package Manager
+.build/
+.swiftpm/
+CueKit/.build/
+CueKit/.swiftpm/
+Package.resolved
+
+# Secrets: never commit keys (the repo is public)
+Config/Secrets.xcconfig
