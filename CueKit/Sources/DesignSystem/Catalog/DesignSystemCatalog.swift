@@ -92,14 +92,15 @@
 
     private struct CatalogButtons: View {
         var body: some View {
-            VStack(alignment: .leading, spacing: CueSpacing.space3) {
-                Button("Recomiéndame") {}.buttonStyle(CueButtonStyle(.primary, fillsWidth: true))
+            VStack(spacing: CueSpacing.space4) {
+                Button("Recomiéndame") {}.buttonStyle(CueButtonStyle(.primary, size: .large))
                 HStack(spacing: CueSpacing.space3) {
                     Button("Marcar visto") {}.buttonStyle(.cuePrimary)
                     Button("Ahora no") {}.buttonStyle(.cueSecondary)
                 }
                 Button("Desactivado") {}.buttonStyle(.cuePrimary).disabled(true)
             }
+            .frame(maxWidth: .infinity)
         }
     }
 

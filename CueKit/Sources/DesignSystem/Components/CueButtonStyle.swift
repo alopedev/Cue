@@ -11,16 +11,45 @@ public struct CueButtonStyle: ButtonStyle {
         case secondary
     }
 
-    let prominence: Prominence
-    let fillsWidth: Bool
+    /// Buttons have fixed sizes; they never stretch to fill the space around them.
+    public enum Size: Sendable {
+        /// The main action of a screen, such as «Recomiéndame». 52 × 240 pt minimum.
+        case large
+        /// Every other Cue action. 44 × 140 pt minimum (Apple's touch target).
+        case regular
 
-    public init(_ prominence: Prominence = .primary, fillsWidth: Bool = false) {
+        var minimumHeight: CGFloat {
+            switch self {
+            case .large: 52
+            case .regular: 44
+            }
+        }
+
+        var minimumWidth: CGFloat {
+            switch self {
+            case .large: 240
+            case .regular: 140
+            }
+        }
+
+        var horizontalPadding: CGFloat {
+            switch self {
+            case .large: CueSpacing.space8
+            case .regular: CueSpacing.space6
+            }
+        }
+    }
+
+    let prominence: Prominence
+    let size: Size
+
+    public init(_ prominence: Prominence = .primary, size: Size = .regular) {
         self.prominence = prominence
-        self.fillsWidth = fillsWidth
+        self.size = size
     }
 
     public func makeBody(configuration: Configuration) -> some View {
-        CueButtonBody(configuration: configuration, prominence: prominence, fillsWidth: fillsWidth)
+        CueButtonBody(configuration: configuration, prominence: prominence, size: size)
     }
 }
 
@@ -32,13 +61,10 @@ extension ButtonStyle where Self == CueButtonStyle {
 private struct CueButtonBody: View {
     let configuration: ButtonStyleConfiguration
     let prominence: CueButtonStyle.Prominence
-    let fillsWidth: Bool
+    let size: CueButtonStyle.Size
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.isEnabled) private var isEnabled
-
-    /// Taller than Apple's 44 pt minimum touch target.
-    static let minimumHeight: CGFloat = 52
 
     var body: some View {
         let motion = PressMotion(
@@ -50,9 +76,10 @@ private struct CueButtonBody: View {
             .cueTextStyle(.label)
             .foregroundStyle(colors.text)
             .multilineTextAlignment(.center)
-            .padding(.horizontal, CueSpacing.space6)
-            .padding(.vertical, CueSpacing.space3)
-            .frame(maxWidth: fillsWidth ? .infinity : nil, minHeight: Self.minimumHeight)
+            .padding(.horizontal, size.horizontalPadding)
+            .padding(.vertical, CueSpacing.space2)
+            .frame(minWidth: size.minimumWidth, minHeight: size.minimumHeight)
+            .fixedSize(horizontal: false, vertical: true)
             .background(Capsule().fill(colors.fill))
             .contentShape(Capsule())
             .offset(y: motion.offset)
