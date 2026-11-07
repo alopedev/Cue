@@ -12,21 +12,35 @@ struct RenderingTests {
         arguments: [ColorScheme.light, .dark]
     )
     func catalogRenders(scheme: ColorScheme) {
-        let image = render(DesignSystemCatalog().environment(\.colorScheme, scheme))
+        let image = render(DesignSystemCatalog().environment(\.colorScheme, scheme).frame(width: 390))
         #expect((image?.height ?? 0) > 400)
     }
 
-    @Test("A button keeps its 52-point minimum height plus its edge")
-    func buttonHeight() {
-        let button = Button("Ok") {}.buttonStyle(.cuePrimary)
-        #expect(render(button)?.height == 52 + Int(CueDepth.button))
+    @Test("A large button has a fixed size: 52 points tall and at least 240 wide, plus its edge")
+    func largeButtonSize() {
+        let image = render(Button("Ok") {}.buttonStyle(CueButtonStyle(.primary, size: .large)).fixedSize())
+        #expect(image?.height == 52 + Int(CueDepth.button))
+        #expect(image?.width == 240)
+    }
+
+    @Test("A regular button is 44 points tall and at least 140 wide, plus its edge")
+    func regularButtonSize() {
+        let image = render(Button("Ok") {}.buttonStyle(.cueSecondary).fixedSize())
+        #expect(image?.height == 44 + Int(CueDepth.button))
+        #expect(image?.width == 140)
+    }
+
+    @Test("A button never stretches to fill the space it is given")
+    func buttonDoesNotStretch() {
+        let image = render(Button("Ok") {}.buttonStyle(CueButtonStyle(.primary, size: .large)))
+        #expect(image?.width == 240)
     }
 
     @Test("A long label wraps instead of being cut")
     func longLabelWraps() {
         let label = String(repeating: "Marcar visto ", count: 8)
         let button = Button(label) {}.buttonStyle(.cueSecondary).frame(width: 200)
-        #expect((render(button)?.height ?? 0) > 52 + Int(CueDepth.button))
+        #expect((render(button)?.height ?? 0) > 44 + Int(CueDepth.button))
     }
 
     @Test("A disabled button draws without its edge")
@@ -36,7 +50,7 @@ struct RenderingTests {
     }
 
     private func render(_ view: some View) -> CGImage? {
-        let renderer = ImageRenderer(content: view.frame(width: 390))
+        let renderer = ImageRenderer(content: view)
         renderer.scale = 1
         return renderer.cgImage
     }
