@@ -16,9 +16,14 @@ struct ButtonRowTests {
         #expect(render(row)?.width == wideWidth * 2 + 12)
     }
 
-    private func render(_ view: some View) -> CGImage? {
-        let renderer = ImageRenderer(content: view)
-        renderer.scale = 1
-        return renderer.cgImage
+    @Test("Buttons that do not fit side by side stack instead of leaving the screen")
+    func stacksWhenNarrow() throws {
+        let row = CueButtonRow {
+            Button("Marcar visto") {}.buttonStyle(.cuePrimary)
+            Button("Ahora no") {}.buttonStyle(.cueSecondary)
+        }
+        let image = try #require(render(row.frame(width: 200)))
+        #expect(image.width == 200)
+        #expect(image.height >= 2 * 52)
     }
 }

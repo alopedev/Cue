@@ -16,17 +16,17 @@ struct RenderingTests {
         #expect((image?.height ?? 0) > 400)
     }
 
-    @Test("A large button has a fixed size: 52 points tall and at least 240 wide, plus its edge")
+    @Test("A large primary button is 52 points tall and at least 240 wide, plus its 6-point edge")
     func largeButtonSize() {
         let image = render(Button("Ok") {}.buttonStyle(CueButtonStyle(.primary, size: .large)).fixedSize())
-        #expect(image?.height == 52 + Int(CueDepth.button))
+        #expect(image?.height == 52 + 6)
         #expect(image?.width == 240)
     }
 
-    @Test("A regular button is 44 points tall and at least 140 wide, plus its edge")
+    @Test("A regular secondary button is 52 points tall and at least 140 wide, plus its 4-point edge")
     func regularButtonSize() {
         let image = render(Button("Ok") {}.buttonStyle(.cueSecondary).fixedSize())
-        #expect(image?.height == 44 + Int(CueDepth.button))
+        #expect(image?.height == 52 + 4)
         #expect(image?.width == 140)
     }
 
@@ -40,18 +40,21 @@ struct RenderingTests {
     func longLabelWraps() {
         let label = String(repeating: "Marcar visto ", count: 8)
         let button = Button(label) {}.buttonStyle(.cueSecondary).frame(width: 200)
-        #expect((render(button)?.height ?? 0) > 44 + Int(CueDepth.button))
+        #expect((render(button)?.height ?? 0) > 52 + 4)
+    }
+
+    @Test("A plain card sits on the soft 4-point edge, a ticket on the 8-point edge")
+    func cardEdges() throws {
+        let content = Color.clear.frame(height: 10)
+        let plain = try #require(render(CueCard(.surface) { content }.frame(width: 200))?.height)
+        let ticket = try #require(render(CueCard(.ticket) { content }.frame(width: 200))?.height)
+        #expect(plain == 10 + 2 * Int(CueSpacing.space4) + 4)
+        #expect(ticket == 10 + 2 * Int(CueSpacing.space4) + 8)
     }
 
     @Test("A disabled button draws without its edge")
     func disabledButton() {
         let button = Button("Ok") {}.buttonStyle(.cuePrimary).disabled(true)
         #expect(render(button) != nil)
-    }
-
-    private func render(_ view: some View) -> CGImage? {
-        let renderer = ImageRenderer(content: view)
-        renderer.scale = 1
-        return renderer.cgImage
     }
 }
