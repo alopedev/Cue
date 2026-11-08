@@ -109,7 +109,7 @@
             VStack(spacing: CueSpacing.space4) {
                 CueCard(.ticket) {
                     VStack(alignment: .leading, spacing: CueSpacing.space3) {
-                        ConcentricRectangle()
+                        RoundedRectangle(cornerRadius: CueCard<EmptyView>.innerRadius, style: .continuous)
                             .fill(CueColor.onTicket.opacity(0.85))
                             .frame(height: 120)
                             .accessibilityHidden(true)

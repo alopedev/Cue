@@ -14,6 +14,7 @@ public struct CueButtonRow<Content: View>: View {
     public var body: some View {
         ViewThatFits(in: .horizontal) {
             EqualWidthLayout(spacing: spacing) { content }
+            VStack(spacing: spacing) { content }.fixedSize(horizontal: true, vertical: false)
             VStack(spacing: spacing) { content }
         }
         .environment(\.cueButtonFillsRowCell, true)

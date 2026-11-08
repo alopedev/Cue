@@ -2,8 +2,8 @@ import SwiftUI
 
 /// A card with rounded corners and a solid edge underneath.
 ///
-/// Shapes placed inside can use `ConcentricRectangle()` or `CueCard.innerRadius`
-/// so their corners stay concentric with the card's (RNF-11).
+/// Shapes placed inside use `CueCard.innerRadius` so their corners stay concentric
+/// with the card's (RNF-11).
 public struct CueCard<Content: View>: View {
     public enum Style: Sendable {
         /// Mint ticket of «Esta noche».
@@ -32,7 +32,6 @@ public struct CueCard<Content: View>: View {
             .padding(CueSpacing.space4)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(shape.fill(colors.fill))
-            .containerShape(shape)
             .background(alignment: .bottom) {
                 shape.fill(colors.edge).offset(y: depth)
             }
