@@ -1,6 +1,7 @@
 import SwiftUI
 
 /// A row of Cue buttons that all take the width of the widest one, so a pair lines up.
+/// When they do not fit (narrow screen, large text) they stack instead of leaving the screen.
 public struct CueButtonRow<Content: View>: View {
     let spacing: CGFloat
     let content: Content
@@ -11,8 +12,11 @@ public struct CueButtonRow<Content: View>: View {
     }
 
     public var body: some View {
-        EqualWidthLayout(spacing: spacing) { content }
-            .environment(\.cueButtonFillsRowCell, true)
+        ViewThatFits(in: .horizontal) {
+            EqualWidthLayout(spacing: spacing) { content }
+            VStack(spacing: spacing) { content }
+        }
+        .environment(\.cueButtonFillsRowCell, true)
     }
 }
 

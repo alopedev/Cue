@@ -34,9 +34,16 @@ public struct CueCard<Content: View>: View {
             .background(shape.fill(colors.fill))
             .containerShape(shape)
             .background(alignment: .bottom) {
-                shape.fill(colors.edge).offset(y: CueDepth.card)
+                shape.fill(colors.edge).offset(y: depth)
             }
-            .padding(.bottom, CueDepth.card)
+            .padding(.bottom, depth)
+    }
+
+    private var depth: CGFloat {
+        switch style {
+        case .ticket: CueDepth.card
+        case .surface: CueDepth.soft
+        }
     }
 
     private var colors: PieceColors {

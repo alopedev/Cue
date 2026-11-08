@@ -11,19 +11,13 @@ public struct CueButtonStyle: ButtonStyle {
         case secondary
     }
 
-    /// Buttons have fixed sizes; they never stretch to fill the space around them.
+    /// Buttons keep a deliberate size; they never stretch to fill the space around them.
+    /// Both sizes are 52 pt tall, as the design system asks (more than Apple's 44 pt minimum).
     public enum Size: Sendable {
-        /// The main action of a screen, such as «Recomiéndame». 52 × 240 pt minimum.
+        /// The main action of a screen, such as «Recomiéndame». At least 240 pt wide.
         case large
-        /// Every other Cue action. 44 × 140 pt minimum (Apple's touch target).
+        /// Every other Cue action. At least 140 pt wide.
         case regular
-
-        var minimumHeight: CGFloat {
-            switch self {
-            case .large: 52
-            case .regular: 44
-            }
-        }
 
         var minimumWidth: CGFloat {
             switch self {
@@ -67,9 +61,11 @@ private struct CueButtonBody: View {
     @Environment(\.isEnabled) private var isEnabled
     @Environment(\.cueButtonFillsRowCell) private var fillsRowCell
 
+    private static let minimumHeight: CGFloat = 52
+
     var body: some View {
         let motion = PressMotion(
-            depth: isEnabled ? CueDepth.button : 0,
+            depth: isEnabled ? depth : 0,
             isPressed: configuration.isPressed,
             reduceMotion: reduceMotion
         )
@@ -78,22 +74,29 @@ private struct CueButtonBody: View {
             .foregroundStyle(colors.text)
             .multilineTextAlignment(.center)
             .padding(.horizontal, size.horizontalPadding)
-            .padding(.vertical, CueSpacing.space2)
+            .padding(.vertical, CueSpacing.space3)
             .frame(
                 minWidth: size.minimumWidth,
                 maxWidth: fillsRowCell ? .infinity : nil,
-                minHeight: size.minimumHeight
+                minHeight: Self.minimumHeight
             )
             .fixedSize(horizontal: false, vertical: true)
             .background(Capsule().fill(colors.fill))
             .contentShape(Capsule())
             .offset(y: motion.offset)
             .background(alignment: .bottom) {
-                Capsule().fill(colors.edge).offset(y: CueDepth.button).opacity(motion.edgeHeight > 0 ? 1 : 0)
+                Capsule().fill(colors.edge).offset(y: depth).opacity(motion.edgeHeight > 0 ? 1 : 0)
             }
-            .padding(.bottom, CueDepth.button)
+            .padding(.bottom, depth)
             .opacity(isEnabled ? motion.opacity : 0.45)
             .animation(motion.animation, value: configuration.isPressed)
+    }
+
+    private var depth: CGFloat {
+        switch prominence {
+        case .primary: CueDepth.button
+        case .secondary: CueDepth.soft
+        }
     }
 
     private var colors: PieceColors {

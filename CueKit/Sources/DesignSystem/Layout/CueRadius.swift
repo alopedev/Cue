@@ -17,10 +17,10 @@ public enum CueRadius {
 
 /// Height of the solid edge under raised pieces. Depth is an edge, never a blurred shadow.
 public enum CueDepth {
-    /// Primary and secondary buttons.
+    /// Primary button (`depth-cue`).
     public static let button: CGFloat = 6
-    /// Cards (tickets).
+    /// Ticket (`depth-ticket`).
     public static let card: CGFloat = 8
-    /// Posters and unselected chips.
+    /// Secondary button, plain card, posters and unselected chips (`depth-soft`).
     public static let soft: CGFloat = 4
 }
