@@ -3,12 +3,28 @@ import Testing
 
 @testable import CueKit
 
-@Suite("InMemoryLibraryStore")
-struct InMemoryLibraryStoreTests {
-    let store: any LibraryStore = InMemoryLibraryStore()
+/// Which `LibraryStore` to build for a contract test run.
+enum LibraryStoreKind: String, CaseIterable, CustomStringConvertible {
+    case inMemory
+    case swiftData
 
-    @Test("§4.4: saving the same series twice keeps one tracking, the latest")
-    func seriesTrackingIsUnique() async throws {
+    var description: String { rawValue }
+
+    func makeStore() throws -> any LibraryStore {
+        switch self {
+        case .inMemory: return InMemoryLibraryStore()
+        case .swiftData: return try SwiftDataLibraryStore(inMemory: true)
+        }
+    }
+}
+
+/// Behaviour every `LibraryStore` must have (docs/adr/0002), checked against both the
+/// in-memory fake and the real SwiftData adapter so neither one drifts from the rules.
+@Suite("LibraryStore contract")
+struct LibraryStoreContractTests {
+    @Test("§4.4: saving the same series twice keeps one tracking, the latest", arguments: LibraryStoreKind.allCases)
+    func seriesTrackingIsUnique(kind: LibraryStoreKind) async throws {
+        let store = try kind.makeStore()
         let first = seriesTracking(.pending)
         let second = seriesTracking(.watching)
         try await store.save(first)
@@ -16,8 +32,9 @@ struct InMemoryLibraryStoreTests {
         #expect(try await store.seriesTrackings() == [second])
     }
 
-    @Test("§4.4: saving the same movie twice keeps one tracking, the latest")
-    func movieTrackingIsUnique() async throws {
+    @Test("§4.4: saving the same movie twice keeps one tracking, the latest", arguments: LibraryStoreKind.allCases)
+    func movieTrackingIsUnique(kind: LibraryStoreKind) async throws {
+        let store = try kind.makeStore()
         let pending = MovieTracking(
             movieID: SampleData.duneID,
             status: .pending,
@@ -35,8 +52,9 @@ struct InMemoryLibraryStoreTests {
         #expect(try await store.movieTrackings() == [watched])
     }
 
-    @Test("Trackings come back in the order they were first saved")
-    func trackingsKeepInsertionOrder() async throws {
+    @Test("Trackings come back in the order they were first saved", arguments: LibraryStoreKind.allCases)
+    func trackingsKeepInsertionOrder(kind: LibraryStoreKind) async throws {
+        let store = try kind.makeStore()
         let other = SeriesTracking(
             seriesID: SeriesID(1),
             status: .watching,
@@ -50,8 +68,9 @@ struct InMemoryLibraryStoreTests {
         #expect(try await store.seriesTrackings().map(\.seriesID) == [SampleData.severanceID, SeriesID(1)])
     }
 
-    @Test("RF-33: a mark can be saved and removed to undo it")
-    func markCanBeUndone() async throws {
+    @Test("RF-33: a mark can be saved and removed to undo it", arguments: LibraryStoreKind.allCases)
+    func markCanBeUndone(kind: LibraryStoreKind) async throws {
+        let store = try kind.makeStore()
         let mark = EpisodeMark(episode: SampleData.episode(1, 1), markedAt: SampleData.reference, source: .manual)
         try await store.save(mark)
         #expect(try await store.episodeMarks() == [mark])
@@ -63,8 +82,9 @@ struct InMemoryLibraryStoreTests {
         #expect(try await store.episodeMarks().isEmpty)
     }
 
-    @Test("Marking the same episode twice keeps one mark")
-    func markIsUniquePerEpisode() async throws {
+    @Test("Marking the same episode twice keeps one mark", arguments: LibraryStoreKind.allCases)
+    func markIsUniquePerEpisode(kind: LibraryStoreKind) async throws {
+        let store = try kind.makeStore()
         let manual = EpisodeMark(episode: SampleData.episode(1, 1), markedAt: SampleData.reference, source: .manual)
         let fromTrakt = EpisodeMark(episode: SampleData.episode(1, 1), markedAt: SampleData.reference, source: .trakt)
         try await store.save(manual)
@@ -72,8 +92,9 @@ struct InMemoryLibraryStoreTests {
         #expect(try await store.episodeMarks() == [fromTrakt])
     }
 
-    @Test("A title keeps one rating, the latest")
-    func ratingIsUniquePerTitle() async throws {
+    @Test("A title keeps one rating, the latest", arguments: LibraryStoreKind.allCases)
+    func ratingIsUniquePerTitle(kind: LibraryStoreKind) async throws {
+        let store = try kind.makeStore()
         let first = try #require(SampleData.rating(6))
         let second = try #require(SampleData.rating(9, daysAfterReference: 1))
         try await store.save(first)
@@ -81,8 +102,9 @@ struct InMemoryLibraryStoreTests {
         #expect(try await store.ratings() == [second])
     }
 
-    @Test("Saving a decision again updates its proposal outcomes")
-    func decisionIsReplacedByID() async throws {
+    @Test("Saving a decision again updates its proposal outcomes", arguments: LibraryStoreKind.allCases)
+    func decisionIsReplacedByID(kind: LibraryStoreKind) async throws {
+        let store = try kind.makeStore()
         let issued = decision(outcome: .noResponse)
         let answered = decision(id: issued.id, outcome: .accepted)
         try await store.save(issued)
@@ -90,8 +112,9 @@ struct InMemoryLibraryStoreTests {
         #expect(try await store.decisions() == [answered])
     }
 
-    @Test("Rejections are kept in order")
-    func rejectionsAreAppended() async throws {
+    @Test("Rejections are kept in order", arguments: LibraryStoreKind.allCases)
+    func rejectionsAreAppended(kind: LibraryStoreKind) async throws {
+        let store = try kind.makeStore()
         let first = Rejection(proposalID: UUID(), reason: .notTonight, rejectedAt: SampleData.reference)
         let second = Rejection(proposalID: UUID(), reason: .tooLong, rejectedAt: SampleData.reference)
         try await store.save(first)
@@ -99,8 +122,9 @@ struct InMemoryLibraryStoreTests {
         #expect(try await store.rejections() == [first, second])
     }
 
-    @Test("RF-01: settings are nil until saved")
-    func settingsStartEmpty() async throws {
+    @Test("RF-01: settings are nil until saved", arguments: LibraryStoreKind.allCases)
+    func settingsStartEmpty(kind: LibraryStoreKind) async throws {
+        let store = try kind.makeStore()
         #expect(try await store.settings() == nil)
 
         let settings = UserSettings(
