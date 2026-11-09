@@ -97,9 +97,11 @@ struct SeriesProgressTests {
     func episodesUpTo() {
         let fixture = SeriesFixture(seasons: [2, 2], aired: 4)
         let progress = fixture.progress(watching: [])
-        #expect(progress.episodes(through: fixture.reference(2, 1)).map(\.id) == [
-            fixture.reference(1, 1), fixture.reference(1, 2), fixture.reference(2, 1),
-        ])
+        #expect(
+            progress.episodes(through: fixture.reference(2, 1)).map(\.id) == [
+                fixture.reference(1, 1), fixture.reference(1, 2), fixture.reference(2, 1),
+            ]
+        )
         #expect(progress.episodes(through: fixture.reference(9, 9)).isEmpty)
     }
 

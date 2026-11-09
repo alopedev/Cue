@@ -57,9 +57,12 @@ struct SeriesStatusRulesTests {
         #expect(SeriesStatusRules.refreshedStatus(.upToDate, progress: progress) == .watching)
     }
 
-    @Test("Refreshing leaves every other status as it is", arguments: [
-        SeriesStatus.pending, .watching, .paused, .abandoned, .finished,
-    ])
+    @Test(
+        "Refreshing leaves every other status as it is",
+        arguments: [
+            SeriesStatus.pending, .watching, .paused, .abandoned, .finished,
+        ]
+    )
     func refreshKeepsOtherStatuses(status: SeriesStatus) {
         let fixture = SeriesFixture(seasons: [4], aired: 3)
         let progress = fixture.progress(watching: [])
