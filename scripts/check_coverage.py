@@ -5,7 +5,7 @@ Usage: check_coverage.py <llvm-cov JSON export covering every test bundle>
 
 Coverage is grouped by area: each folder directly under `Sources/CueKit/`
 (Domain, Engine, Library, Adapters…) and every other target as a whole
-(DesignSystem). Thresholds (development plan, section 5): Domain and Engine
+(DesignSystem). Thresholds (development plan, section 5): Domain, Library and Engine
 >= 95 %, every other area >= 85 %. An area with no code yet is skipped.
 """
 
@@ -14,7 +14,7 @@ import re
 import sys
 from collections import defaultdict
 
-STRICT_AREAS = {"Domain": 95.0, "Engine": 95.0}
+STRICT_AREAS = {"Domain": 95.0, "Library": 95.0, "Engine": 95.0}
 DEFAULT_THRESHOLD = 85.0
 SOURCE_PATTERN = re.compile(r"/CueKit/Sources/([^/]+)/(?:([^/]+)/)?")
 
