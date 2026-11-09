@@ -68,7 +68,7 @@ private struct PosterMotifDrawing {
     }
 
     private func drawSunset(in context: inout GraphicsContext) {
-        let horizon = art * 0.86
+        let horizon = art * 0.74
         let radius = width * 0.36
         var sky = context
         sky.clip(to: Path(CGRect(x: 0, y: 0, width: width, height: horizon)))
@@ -140,7 +140,8 @@ private struct PosterMotifDrawing {
     private func drawDots(in context: inout GraphicsContext) {
         let columns = 5
         let spacing = width / CGFloat(columns)
-        let rows = Int(art / spacing)
+        // The bottom stays clear: the library draws the progress bar there.
+        let rows = Int(art * 0.84 / spacing)
         for row in 0..<rows {
             for column in 0..<columns {
                 let center = CGPoint(x: spacing * (CGFloat(column) + 0.5), y: spacing * (CGFloat(row) + 0.5))

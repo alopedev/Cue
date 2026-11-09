@@ -4,7 +4,7 @@ import SwiftUI
 
 @main
 struct CueApp: App {
-    @State private var library: LibraryModel
+    @State private var library: AppDependencies.Library
 
     init() {
         // Titles fall back to the system font if this fails, so the app keeps working.
@@ -14,7 +14,7 @@ struct CueApp: App {
 
     var body: some Scene {
         WindowGroup {
-            RootView(library: library)
+            RootView(library: library.model, isSavedOnDevice: library.isSavedOnDevice)
         }
     }
 }

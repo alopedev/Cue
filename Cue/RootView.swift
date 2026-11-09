@@ -5,6 +5,7 @@ import SwiftUI
 /// The app's first screen. «Esta noche» joins the library in block 3.
 struct RootView: View {
     let library: LibraryModel
+    let isSavedOnDevice: Bool
 
     #if DEBUG
         /// Launch with `-designCatalog` to open the design catalog directly (screenshots).
@@ -13,7 +14,7 @@ struct RootView: View {
 
     var body: some View {
         NavigationStack {
-            LibraryScreen(library: library)
+            LibraryScreen(library: library, isSavedOnDevice: isSavedOnDevice)
                 #if DEBUG
                     .navigationDestination(isPresented: $showsDesignCatalog) {
                         DesignSystemCatalog()
