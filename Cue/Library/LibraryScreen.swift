@@ -5,6 +5,7 @@ import SwiftUI
 /// The library: a grid of posters grouped by shelf, with the catch-up time on top (RF-34, RF-37).
 struct LibraryScreen: View {
     let library: LibraryModel
+    let isSavedOnDevice: Bool
 
     /// The shelf the user tapped. Until then the screen picks one (see `automaticShelf`).
     @State private var chosenShelf: LibraryShelf?
@@ -15,6 +16,7 @@ struct LibraryScreen: View {
         ScrollView {
             VStack(alignment: .leading, spacing: CueSpacing.space6) {
                 header
+                if let problem { ProblemNotice(problem: problem) }
                 if library.isLoaded && library.entries.isEmpty {
                     LibraryEmptyState { showsAddTitles = true }
                 } else if library.isLoaded {
@@ -76,6 +78,14 @@ struct LibraryScreen: View {
         } else {
             LibraryGrid(entries: entries, library: library) { openTitle = OpenTitle(id: $0) }
         }
+    }
+
+    /// The most serious thing that went wrong with the user's data, if any.
+    private var problem: ProblemNotice.Problem? {
+        if !isSavedOnDevice { return .notSavedOnDevice }
+        if library.hasSavingProblem { return .lastChangeNotSaved }
+        if library.hasLoadingProblem { return .someTitlesMissing }
+        return nil
     }
 
     private var isShowingSheet: Bool { openTitle != nil || showsAddTitles }

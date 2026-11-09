@@ -30,7 +30,7 @@ struct TitleDetailSheet: View {
                 }
             }
         }
-        .presentationDetents(entry?.movieEntry == nil ? [.large] : [.fraction(0.72), .large])
+        .presentationDetents(entry?.movieEntry == nil ? [.large] : [.fraction(0.62), .large])
         .presentationDragIndicator(.visible)
         .overlay { CelebrationOverlay(library: library) }
         .markingFeedback(library)
