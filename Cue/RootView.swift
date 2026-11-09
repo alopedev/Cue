@@ -1,39 +1,36 @@
+import CueKit
 import DesignSystem
 import SwiftUI
 
-/// Placeholder root screen. Real screens arrive with the first block.
+/// The app's first screen. «Esta noche» joins the library in block 3.
 struct RootView: View {
+    let library: LibraryModel
+
     #if DEBUG
-        /// Launch with `-designCatalog` to open the catalog directly (screenshots).
+        /// Launch with `-designCatalog` to open the design catalog directly (screenshots).
         @State private var showsDesignCatalog = ProcessInfo.processInfo.arguments.contains("-designCatalog")
     #endif
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: CueSpacing.space6) {
-                Text("Cue")
-                    .cueTextStyle(.display)
-                    .accessibilityIdentifier("root.title")
+            LibraryScreen(library: library)
                 #if DEBUG
-                    Button("Ver sistema de diseño") { showsDesignCatalog = true }
-                        .buttonStyle(.cueSecondary)
-                        .accessibilityIdentifier("root.designCatalog")
+                    .navigationDestination(isPresented: $showsDesignCatalog) {
+                        DesignSystemCatalog()
+                        .navigationTitle("Sistema de diseño")
+                        .navigationBarTitleDisplayMode(.inline)
+                    }
                 #endif
-            }
-            .foregroundStyle(CueColor.ink)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(CueColor.canvas)
+        }
+        .tint(CueColor.cue)
+        .task {
+            guard !library.isLoaded else { return }
+            await library.load()
             #if DEBUG
-                .navigationDestination(isPresented: $showsDesignCatalog) {
-                    DesignSystemCatalog()
-                    .navigationTitle("Sistema de diseño")
-                    .navigationBarTitleDisplayMode(.inline)
+                if AppDependencies.arguments.contains(AppDependencies.sampleLibraryArgument) {
+                    await SampleLibrary.fill(library)
                 }
             #endif
         }
     }
-}
-
-#Preview {
-    RootView()
 }

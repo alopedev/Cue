@@ -25,11 +25,6 @@ struct PosterDesignTests {
         #expect(Set(designs.map(\.motif)).count >= 5)
     }
 
-    @Test("Poster titles are readable on every palette (4.5:1)", arguments: PosterPalette.all)
-    func titleIsReadable(palette: PosterPalette) {
-        #expect(palette.text.contrastRatio(with: palette.background) >= 4.5)
-    }
-
     @Test("Shapes stand out from the poster background (1.5:1 at least)", arguments: PosterPalette.all)
     func shapesStandOut(palette: PosterPalette) {
         #expect(palette.primary.contrastRatio(with: palette.background) >= 1.5)
@@ -39,7 +34,7 @@ struct PosterDesignTests {
     @Test("A poster keeps the 2:3 shape of a film poster, plus its edge", arguments: PosterMotif.allCases)
     func posterShape(motif: PosterMotif) throws {
         let design = PosterDesign(palette: PosterPalette.all[0], motif: motif)
-        let image = try #require(render(CuePoster(title: "Mareas", design: design).frame(width: 120)))
+        let image = try #require(render(CuePoster(design: design).frame(width: 120)))
         #expect(image.width == 120)
         #expect(image.height == 180 + Int(CueDepth.soft))
     }

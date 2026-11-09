@@ -6,7 +6,6 @@ public struct PosterPalette: Hashable, Sendable, CustomStringConvertible {
     public let primary: RGBColor
     /// The small accent.
     public let secondary: RGBColor
-    public let text: RGBColor
 
     public var description: String { name }
 
@@ -15,43 +14,37 @@ public struct PosterPalette: Hashable, Sendable, CustomStringConvertible {
             name: "remote",
             background: CuePalette.remote.light,
             primary: CuePalette.peach.light,
-            secondary: CuePalette.blush.light,
-            text: CuePalette.ink.dark
+            secondary: CuePalette.blush.light
         ),
         PosterPalette(
             name: "peach",
             background: CuePalette.peach.light,
             primary: CuePalette.remote.light,
-            secondary: CuePalette.ticket.light,
-            text: CuePalette.remote.light
+            secondary: CuePalette.ticket.light
         ),
         PosterPalette(
             name: "mint",
             background: CuePalette.ticket.light,
             primary: CuePalette.onTicket.light,
-            secondary: CuePalette.blush.light,
-            text: CuePalette.onTicket.light
+            secondary: CuePalette.blush.light
         ),
         PosterPalette(
             name: "stage",
             background: CuePalette.stage.light,
             primary: CuePalette.cue.light,
-            secondary: CuePalette.remote.light,
-            text: CuePalette.remote.light
+            secondary: CuePalette.remote.light
         ),
         PosterPalette(
             name: "night",
             background: CuePalette.remoteEdge.light,
             primary: CuePalette.ticket.light,
-            secondary: CuePalette.peach.light,
-            text: CuePalette.ink.dark
+            secondary: CuePalette.peach.light
         ),
         PosterPalette(
             name: "blush",
             background: CuePalette.blush.light,
             primary: CuePalette.remote.light,
-            secondary: CuePalette.stage.light,
-            text: CuePalette.remote.light
+            secondary: CuePalette.stage.light
         ),
     ]
 }

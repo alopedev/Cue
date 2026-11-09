@@ -2,17 +2,16 @@ import SwiftUI
 
 /// A 2:3 poster with rounded corners and a solid edge underneath.
 ///
-/// Until the real catalog brings images, it draws a sample poster from the title.
+/// Until the real catalog brings images, it draws an abstract sample poster from the title.
+/// The title itself goes under the poster, never on it, so it is not written twice.
 public struct CuePoster: View {
-    let title: String
     let design: PosterDesign
 
     public init(title: String) {
-        self.init(title: title, design: PosterDesign(title: title))
+        self.init(design: PosterDesign(title: title))
     }
 
-    public init(title: String, design: PosterDesign) {
-        self.title = title
+    public init(design: PosterDesign) {
         self.design = design
     }
 
@@ -20,7 +19,7 @@ public struct CuePoster: View {
         let shape = RoundedRectangle(cornerRadius: CueRadius.small, style: .continuous)
         Color.clear
             .aspectRatio(2 / 3, contentMode: .fit)
-            .overlay { PosterArtwork(title: title, design: design) }
+            .overlay { PosterArtwork(design: design) }
             .clipShape(shape)
             .background(alignment: .bottom) {
                 shape.fill(CueColor.softEdge).offset(y: CueDepth.soft)
@@ -31,36 +30,23 @@ public struct CuePoster: View {
 }
 
 private struct PosterArtwork: View {
-    let title: String
     let design: PosterDesign
 
     var body: some View {
-        GeometryReader { proxy in
-            let size = proxy.size
-            ZStack(alignment: .bottomLeading) {
-                Canvas { context, canvasSize in
-                    PosterMotifDrawing(palette: design.palette, size: canvasSize).draw(design.motif, in: &context)
-                }
-                Text(title)
-                    .font(.custom(CueFonts.titlePostScriptName, fixedSize: max(size.width * 0.125, 9)))
-                    .tracking(-0.01 * size.width * 0.125)
-                    .foregroundStyle(design.palette.text.swiftUIColor)
-                    .lineLimit(3)
-                    .minimumScaleFactor(0.6)
-                    .padding(size.width * 0.08)
-            }
-            .background(design.palette.background.swiftUIColor)
+        Canvas { context, size in
+            PosterMotifDrawing(palette: design.palette, size: size).draw(design.motif, in: &context)
         }
+        .background(design.palette.background.swiftUIColor)
     }
 }
 
-/// Draws each motif in the top 62 % of the poster, leaving the bottom clear for the title.
+/// Draws each motif over the whole poster.
 private struct PosterMotifDrawing {
     let palette: PosterPalette
     let size: CGSize
 
     private var width: CGFloat { size.width }
-    private var art: CGFloat { size.height * 0.62 }
+    private var art: CGFloat { size.height }
 
     func draw(_ motif: PosterMotif, in context: inout GraphicsContext) {
         switch motif {
