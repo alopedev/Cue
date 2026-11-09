@@ -3,7 +3,7 @@
 **Versión:** 0.2 · Borrador
 **Fecha:** 1 de noviembre de 2026
 **Autor:** Àlex
-**Estado:** Decisiones de alcance cerradas el 31/10 y el 1/11 de 2026. Quedan abiertas las de la §10.
+**Estado:** Decisiones de alcance cerradas el 31/10 y el 1/11 de 2026; la escala de puntuación (D-08), el 07/11. Quedan abiertas las de la §10.2.
 
 **Cambios respecto a la v0.1 (15/08/2026):**
 
@@ -16,7 +16,7 @@
 - La app sigue el modo claro/oscuro del iPhone. El widget sale de la fase 1.
 - En cada requisito se indica si es **[nuevo]**, **[cambiado]** o **[aplazado]** respecto a la v0.1.
 
-Detalle de cada decisión: documento «Cue — Listado de funcionalidades» (https://claude.ai/artifact/8aMSRYkiHe7xWvEJeQcDNP).
+Detalle de cada decisión: documento «Cue — Listado de funcionalidades» (https://claude.ai/artifact/8aMSRYkiHe7xWvEJeQcDNP). Es un documento histórico y privado: si no coincide con este PRD, manda el PRD.
 
 ---
 
