@@ -82,6 +82,18 @@ struct LibraryModelTests {
         #expect(harness.series(SeriesFixture.id)?.tracking.status == .watching)
     }
 
+    @Test("Two taps on the same title at once add it only once")
+    func concurrentAddsKeepOne() async {
+        let harness = LibraryHarness()
+        await harness.model.load()
+        async let first: Void = harness.model.add(harness.airingItem)
+        async let second: Void = harness.model.add(harness.airingItem)
+        _ = await (first, second)
+
+        #expect(harness.model.entries.count == 1)
+        #expect(await harness.store.seriesTrackings().count == 1)
+    }
+
     @Test("RF-30: marking the next episode moves a pending series to watching")
     func markNextEpisode() async throws {
         let harness = LibraryHarness()

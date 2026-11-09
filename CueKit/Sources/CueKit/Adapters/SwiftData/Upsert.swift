@@ -18,8 +18,9 @@ func upsert<Model: PersistentModel>(
         }
         try apply(primary)
     } else {
+        // Fill the row before inserting it, so a failure never leaves an empty row behind.
         let model = makeNew()
-        context.insert(model)
         try apply(model)
+        context.insert(model)
     }
 }

@@ -11,6 +11,7 @@ public struct SeriesProgress: Hashable, Sendable {
     /// Aired episodes the user has not watched, in air order.
     public let remainingEpisodes: [Episode]
     public let hasUnairedEpisodes: Bool
+    private let airedEpisodes: Set<EpisodeReference>
     /// Minutes needed to watch every remaining episode. Unknown runtimes count as the average.
     public let remainingMinutes: Int
 
@@ -23,6 +24,7 @@ public struct SeriesProgress: Hashable, Sendable {
         watchedAiredCount = aired.count - remaining.count
         remainingEpisodes = remaining
         hasUnairedEpisodes = aired.count < regular.count
+        airedEpisodes = Set(aired.map(\.id))
         remainingMinutes = Self.minutes(of: remaining, averageOf: regular)
     }
 
@@ -43,6 +45,11 @@ public struct SeriesProgress: Hashable, Sendable {
     public func episodes(through reference: EpisodeReference) -> [Episode] {
         guard let index = episodes.firstIndex(where: { $0.id == reference }) else { return [] }
         return Array(episodes[...index])
+    }
+
+    /// The episode had aired when this progress was computed.
+    public func hasAired(_ reference: EpisodeReference) -> Bool {
+        airedEpisodes.contains(reference)
     }
 
     /// The episode closes its season.

@@ -18,6 +18,7 @@ public final class LibraryModel {
     public private(set) var pendingUndo: PendingUndo?
     public private(set) var celebration: Celebration?
 
+    @ObservationIgnored private var addsInProgress: Set<TitleID> = []
     @ObservationIgnored private let store: any LibraryStore
     @ObservationIgnored private let catalog: any CatalogProvider
     @ObservationIgnored private let clock: any Clock
@@ -87,7 +88,8 @@ public final class LibraryModel {
         let current = entry.progress.currentEpisode?.id
         guard status != tracking.status || current != tracking.currentEpisode else { return entry }
         let refreshed = tracking.with(status: status, currentEpisode: current)
-        try? await store.save(refreshed)
+        // Show the refreshed status only if it was saved, so the next launch shows the same.
+        guard (try? await store.save(refreshed)) != nil else { return entry }
         return SeriesEntry(details: details, tracking: refreshed, marks: markRecords, now: clock.now)
     }
 
@@ -103,7 +105,10 @@ public final class LibraryModel {
 
     /// Adds a series or movie as pending (RF-49). Does nothing if it is already in the library.
     public func add(_ item: CatalogItem) async {
-        guard !contains(item) else { return }
+        // A second tap while the first one is still saving must not add the title twice.
+        guard !contains(item), !addsInProgress.contains(item.titleID) else { return }
+        addsInProgress.insert(item.titleID)
+        defer { addsInProgress.remove(item.titleID) }
         await saving {
             switch item {
             case .series(let series):

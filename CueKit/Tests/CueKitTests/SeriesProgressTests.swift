@@ -22,6 +22,14 @@ struct SeriesProgressTests {
         #expect(progress.hasUnairedEpisodes)
     }
 
+    @Test("Tells which episodes had aired")
+    func tellsAiredEpisodes() {
+        let fixture = SeriesFixture(seasons: [3], aired: 2)
+        let progress = fixture.progress(watching: [])
+        #expect(progress.hasAired(fixture.reference(1, 2)))
+        #expect(!progress.hasAired(fixture.reference(1, 3)))
+    }
+
     @Test("RF-35: remaining episodes and minutes cover only the unwatched aired ones")
     func remainingEpisodesAndMinutes() {
         let fixture = SeriesFixture(seasons: [5], aired: 4, runtimeMinutes: 45)

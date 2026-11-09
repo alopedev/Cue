@@ -40,7 +40,7 @@ struct SeriesDetailView: View {
                         EpisodeRow(
                             episode: episode,
                             isWatched: series.watchedEpisodes.contains(episode.id),
-                            hasAired: hasAired(episode),
+                            hasAired: series.progress.hasAired(episode.id),
                             toggle: { Task { await library.toggle(episode.id) } },
                             markThrough: { Task { await library.markThrough(episode.id) } }
                         )
@@ -99,10 +99,6 @@ struct SeriesDetailView: View {
         episodes(of: season).filter { series.watchedEpisodes.contains($0.id) }.count
     }
 
-    private func hasAired(_ episode: Episode) -> Bool {
-        guard let date = episode.airDate else { return false }
-        return date <= Date()
-    }
 }
 
 /// The next episode to watch and the one-tap button to mark it (RF-30).
@@ -159,7 +155,7 @@ private struct CaughtUpCard: View {
     }
 
     private var nextAirDate: Date? {
-        series.progress.episodes.compactMap(\.airDate).first { $0 > Date() }
+        series.progress.episodes.first { !series.progress.hasAired($0.id) }?.airDate
     }
 
     private var title: String {
