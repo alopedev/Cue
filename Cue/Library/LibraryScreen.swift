@@ -6,8 +6,8 @@ import SwiftUI
 struct LibraryScreen: View {
     let library: LibraryModel
 
-    @State private var selectedShelf: LibraryShelf = .watching
-    @State private var hasChosenShelf = false
+    /// The shelf the user tapped. Until then the screen picks one (see `automaticShelf`).
+    @State private var chosenShelf: LibraryShelf?
     @State private var showsAddTitles = false
     @State private var openTitle: OpenTitle?
 
@@ -21,7 +21,7 @@ struct LibraryScreen: View {
                     if library.catchUpMinutes > 0 {
                         CatchUpCard(minutes: library.catchUpMinutes, seriesCount: watchingSeriesCount)
                     }
-                    ShelfBar(shelves: visibleShelves, selected: $selectedShelf, count: count(on:))
+                    ShelfBar(shelves: visibleShelves, selected: selectedShelfBinding, count: count(on:))
                     shelfContent
                 }
             }
@@ -38,16 +38,18 @@ struct LibraryScreen: View {
         .sheet(item: $openTitle) { title in
             TitleDetailSheet(library: library, titleID: title.id)
         }
-        .overlay(alignment: .bottom) {
-            UndoToast(library: library)
+        // While a sheet is open, the sheet shows these itself, so they never appear twice.
+        .safeAreaInset(edge: .bottom) {
+            // An inset, not an overlay: the grid can scroll above it instead of hiding under it.
+            if !isShowingSheet { UndoToast(library: library) }
         }
         .overlay {
-            if openTitle == nil && !showsAddTitles {
-                CelebrationOverlay(library: library)
-            }
+            if !isShowingSheet { CelebrationOverlay(library: library) }
         }
         .markingFeedback(library)
-        .onChange(of: library.entries) { chooseInitialShelf() }
+        #if DEBUG
+            .onChange(of: library.entries.count) { openTitleFromLaunchArguments() }
+        #endif
     }
 
     private var header: some View {
@@ -76,6 +78,8 @@ struct LibraryScreen: View {
         }
     }
 
+    private var isShowingSheet: Bool { openTitle != nil || showsAddTitles }
+
     private var watchingSeriesCount: Int {
         library.entries(on: .watching).count
     }
@@ -89,13 +93,27 @@ struct LibraryScreen: View {
         LibraryShelf.allCases.filter { $0 == .watching || $0 == selectedShelf || count(on: $0) > 0 }
     }
 
-    /// Opens on Viendo; if it is empty, on the first shelf with titles. Only once.
-    private func chooseInitialShelf() {
-        guard !hasChosenShelf, !library.entries.isEmpty else { return }
-        hasChosenShelf = true
-        if count(on: .watching) == 0, let first = LibraryShelf.allCases.first(where: { count(on: $0) > 0 }) {
-            selectedShelf = first
+    #if DEBUG
+        /// Launch with `-openTitle "<name>"` to open that title's sheet (screenshots).
+        private func openTitleFromLaunchArguments() {
+            let arguments = AppDependencies.arguments
+            guard openTitle == nil, let flag = arguments.firstIndex(of: "-openTitle"), flag + 1 < arguments.count,
+                let entry = library.entries.first(where: { $0.title == arguments[flag + 1] })
+            else { return }
+            openTitle = OpenTitle(id: entry.id)
         }
+    #endif
+
+    private var selectedShelf: LibraryShelf { chosenShelf ?? automaticShelf }
+
+    private var selectedShelfBinding: Binding<LibraryShelf> {
+        Binding(get: { selectedShelf }, set: { chosenShelf = $0 })
+    }
+
+    /// Viendo by default (RF-34); while it is empty, the first shelf that has titles.
+    private var automaticShelf: LibraryShelf {
+        guard count(on: .watching) == 0 else { return .watching }
+        return LibraryShelf.allCases.first { count(on: $0) > 0 } ?? .watching
     }
 }
 

@@ -37,22 +37,7 @@ struct UndoToast: View {
             }
             .lineLimit(1)
             Spacer(minLength: CueSpacing.space2)
-            Button {
-                Task { await library.undo() }
-            } label: {
-                HStack(spacing: CueSpacing.space2) {
-                    CountdownRing(remaining: remaining)
-                    Text("Deshacer")
-                        .font(.subheadline.weight(.bold))
-                }
-                .foregroundStyle(CueColor.ink)
-                .padding(.horizontal, CueSpacing.space3)
-                .frame(minHeight: 44)
-                .background(Capsule().fill(CueColor.surfaceSunken))
-                .contentShape(Capsule())
-            }
-            .buttonStyle(.plain)
-            .accessibilityIdentifier("undo.button")
+            UndoButton(remaining: remaining) { Task { await library.undo() } }
         }
         .padding(.leading, CueSpacing.space3)
         .padding(.trailing, CueSpacing.space2)
@@ -74,6 +59,29 @@ struct UndoToast: View {
         }
         if undo.marked.count > 1 { return "\(undo.marked.count) episodios vistos" }
         return "Episodio sin marcar"
+    }
+}
+
+/// «Deshacer» with the ring that shows the time left.
+private struct UndoButton: View {
+    let remaining: Double
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: CueSpacing.space2) {
+                CountdownRing(remaining: remaining)
+                Text("Deshacer")
+                    .font(.subheadline.weight(.bold))
+            }
+            .foregroundStyle(CueColor.ink)
+            .padding(.horizontal, CueSpacing.space3)
+            .frame(minHeight: 44)
+            .background(Capsule().fill(CueColor.surfaceSunken))
+            .contentShape(Capsule())
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("undo.button")
     }
 }
 

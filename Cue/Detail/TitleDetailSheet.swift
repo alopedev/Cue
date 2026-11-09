@@ -21,6 +21,8 @@ struct TitleDetailSheet: View {
             .scrollContentBackground(.hidden)
             .background(CueColor.canvas)
             .navigationBarTitleDisplayMode(.inline)
+            // An inset, not an overlay: the undo capsule never covers the buttons above it.
+            .safeAreaInset(edge: .bottom) { UndoToast(library: library) }
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Cerrar") { dismiss() }
@@ -28,7 +30,8 @@ struct TitleDetailSheet: View {
                 }
             }
         }
-        .overlay(alignment: .bottom) { UndoToast(library: library) }
+        .presentationDetents(entry?.movieEntry == nil ? [.large] : [.fraction(0.72), .large])
+        .presentationDragIndicator(.visible)
         .overlay { CelebrationOverlay(library: library) }
         .markingFeedback(library)
     }
@@ -43,6 +46,8 @@ struct DetailHeader: View {
     let title: String
     let facts: [String]
     let status: String
+    /// A short note next to the status, such as «En emisión».
+    var note: String?
 
     var body: some View {
         HStack(alignment: .top, spacing: CueSpacing.space4) {
@@ -58,8 +63,15 @@ struct DetailHeader: View {
                     .cueTextStyle(.callout)
                     .foregroundStyle(CueColor.inkMuted)
                     .fixedSize(horizontal: false, vertical: true)
-                StatusPill(text: status)
-                    .padding(.top, CueSpacing.space1)
+                HStack(spacing: CueSpacing.space2) {
+                    StatusPill(text: status)
+                    if let note {
+                        Text(note)
+                            .cueTextStyle(.caption)
+                            .foregroundStyle(CueColor.inkMuted)
+                    }
+                }
+                .padding(.top, CueSpacing.space1)
             }
             Spacer(minLength: 0)
         }

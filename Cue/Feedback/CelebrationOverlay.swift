@@ -12,7 +12,7 @@ struct CelebrationOverlay: View {
     var body: some View {
         ZStack {
             if let celebration = library.celebration {
-                CueColor.canvas.opacity(0.94)
+                CueColor.canvas
                     .ignoresSafeArea()
                     .onTapGesture { library.dismissCelebration() }
                     .transition(.opacity)

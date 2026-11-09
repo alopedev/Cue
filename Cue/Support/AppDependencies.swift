@@ -30,6 +30,8 @@ enum AppDependencies {
         if arguments.contains(freshLibraryArgument) || arguments.contains(sampleLibraryArgument) {
             return InMemoryLibraryStore()
         }
-        return InMemoryLibraryStore()
+        // Saved on the iPhone (iCloud comes in block 4). If the file cannot be opened,
+        // the app still works for this session instead of crashing.
+        return (try? SwiftDataLibraryStore()) ?? InMemoryLibraryStore()
     }
 }

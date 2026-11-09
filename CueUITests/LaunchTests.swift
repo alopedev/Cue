@@ -1,13 +1,14 @@
 import XCTest
 
-/// Smoke test: the app launches and shows its first screen.
+/// Smoke test: the app launches and shows the library.
 final class LaunchTests: XCTestCase {
     @MainActor
-    func testAppLaunchesAndShowsRootScreen() {
+    func testAppLaunchesAndShowsLibrary() {
         let app = XCUIApplication()
+        app.launchArguments = ["-freshLibrary"]
         app.launch()
 
         // Generous timeout: the first launch on a cold CI simulator is slow.
-        XCTAssertTrue(app.staticTexts["root.title"].waitForExistence(timeout: 30))
+        XCTAssertTrue(app.staticTexts["library.title"].waitForExistence(timeout: 60))
     }
 }

@@ -8,10 +8,15 @@ struct LibraryGrid: View {
     let library: LibraryModel
     let open: (TitleID) -> Void
 
-    private let columns = Array(
-        repeating: GridItem(.flexible(), spacing: CueSpacing.space3, alignment: .top),
-        count: 3
-    )
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    /// Three columns; two with the largest text sizes, so names are not cut.
+    private var columns: [GridItem] {
+        Array(
+            repeating: GridItem(.flexible(), spacing: CueSpacing.space3, alignment: .top),
+            count: dynamicTypeSize.isAccessibilitySize ? 2 : 3
+        )
+    }
 
     var body: some View {
         LazyVGrid(columns: columns, alignment: .leading, spacing: CueSpacing.space4) {

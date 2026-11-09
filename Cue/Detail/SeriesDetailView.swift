@@ -10,15 +10,20 @@ struct SeriesDetailView: View {
     var body: some View {
         List {
             Section {
-                DetailHeader(title: details.series.title, facts: facts, status: status)
+                DetailHeader(
+                    title: details.series.title,
+                    facts: facts,
+                    status: status,
+                    note: LibraryText.airingStatus(details.series.airingStatus)
+                )
             }
             Section { nextUp }
-            if series.progress.remainingEpisodes.count > 0 {
+            if !series.progress.remainingEpisodes.isEmpty {
                 Section {
-                    HStack(spacing: CueSpacing.space4) {
+                    statsLayout {
                         DetailStat(
-                            label: "Te quedan",
-                            value: LibraryText.episodes(series.progress.remainingEpisodes.count)
+                            label: "Episodios por ver",
+                            value: "\(series.progress.remainingEpisodes.count)"
                         )
                         DetailStat(
                             label: "Tiempo estimado",
@@ -54,12 +59,20 @@ struct SeriesDetailView: View {
         .listSectionSpacing(CueSpacing.space4)
     }
 
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    /// Side by side; one above the other with the largest text sizes, so numbers are not cut.
+    private var statsLayout: AnyLayout {
+        dynamicTypeSize.isAccessibilitySize
+            ? AnyLayout(VStackLayout(alignment: .leading, spacing: CueSpacing.space3))
+            : AnyLayout(HStackLayout(spacing: CueSpacing.space4))
+    }
+
     private var details: SeriesDetails { series.details }
 
     private var facts: [String] {
         [
             details.series.year.map(String.init), LibraryText.seasons(details.series.seasonCount),
-            LibraryText.airingStatus(details.series.airingStatus),
         ].compactMap { $0 }
     }
 

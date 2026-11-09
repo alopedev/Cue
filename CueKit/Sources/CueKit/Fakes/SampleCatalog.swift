@@ -129,7 +129,7 @@ public enum SampleCatalog {
         let episodes = references.enumerated().map { position, reference in
             Episode(
                 id: reference,
-                title: "Episodio \(reference.episodeNumber)",
+                title: episodeTitles[(position + spec.id) % episodeTitles.count],
                 runtimeMinutes: spec.runtime + (position % 3) - 1,
                 airDate: airDate(position: position, aired: spec.aired, now: now)
             )
@@ -156,6 +156,13 @@ public enum SampleCatalog {
         let weeksFromLastAired = Double(position - aired + 1)
         return now.addingTimeInterval(weeksFromLastAired * 7 * day - 3 * day)
     }
+
+    private static let episodeTitles = [
+        "El regreso", "Marea alta", "Lo que no se dijo", "La llave", "Cartas sin abrir", "El faro apagado",
+        "Fuera de plano", "Noche cerrada", "La otra orilla", "Último aviso", "Ruido blanco", "Puertas adentro",
+        "El mapa", "Hora punta", "Media vuelta", "Deshielo", "La señal", "Sin cobertura", "Domingo",
+        "El inventario", "Viento sur", "Doble fondo", "La mudanza", "Punto ciego",
+    ]
 
     // MARK: Movies
 

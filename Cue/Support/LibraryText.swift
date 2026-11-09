@@ -73,9 +73,5 @@ enum LibraryText {
         count == 1 ? "1 temporada" : "\(count) temporadas"
     }
 
-    static func episodes(_ count: Int) -> String {
-        count == 1 ? "1 episodio" : "\(count) episodios"
-    }
-
     private static let spanish = Locale(identifier: "es_ES")
 }
