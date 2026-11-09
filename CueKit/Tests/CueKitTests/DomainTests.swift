@@ -18,4 +18,18 @@ struct DomainTests {
     func windowChoices() {
         #expect(TimeWindow.choices.map(\.minutes) == [30, 45, 60, 90, 120])
     }
+
+    @Test("§4.2: a mood keeps separate criteria for series and movies")
+    func moodKeepsSeparateCriteria() {
+        let romance = Keyword(id: 9840, name: "romance")
+        let mood = Mood(
+            id: "romantic",
+            displayName: "Romántica",
+            seriesCriteria: .matching(genreIDs: [], keywordIDs: [romance.id]),
+            movieCriteria: .matching(genreIDs: [10749], keywordIDs: [])
+        )
+        #expect(mood.seriesCriteria == .matching(genreIDs: [], keywordIDs: [9840]))
+        #expect(mood.movieCriteria == .matching(genreIDs: [10749], keywordIDs: []))
+        #expect(mood.movieCriteria != .everything)
+    }
 }
