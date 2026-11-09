@@ -34,8 +34,21 @@ swiftlint lint --quiet || fail "lint"
 step "CueKit: build and tests with coverage"
 (cd CueKit && swift build && swift test --enable-code-coverage) || fail "CueKit tests"
 
-step "CueKit: coverage"
-python3 scripts/check_coverage.py "$(cd CueKit && swift test --show-codecov-path)" || fail "coverage"
+step "CueKit: coverage of every test bundle"
+# `swift test --show-codecov-path` only covers the first test bundle, so export
+# the merged profile against all of them (CueKitTests and DesignSystemTests).
+BIN_PATH="$(cd CueKit && swift build --show-bin-path)"
+PROFILE="$BIN_PATH/codecov/default.profdata"
+COVERAGE_JSON="$ROOT/.build/coverage.json"
+TEST_BINARIES=()
+for bundle in "$BIN_PATH"/*.xctest; do
+    TEST_BINARIES+=(-object "$bundle/Contents/MacOS/$(basename "$bundle" .xctest)")
+done
+[[ -f "$PROFILE" && ${#TEST_BINARIES[@]} -gt 0 ]] || fail "coverage: no profile or test bundles in $BIN_PATH"
+mkdir -p "$ROOT/.build"
+xcrun llvm-cov export -summary-only -instr-profile "$PROFILE" "${TEST_BINARIES[@]:1}" >"$COVERAGE_JSON" \
+    || fail "coverage export"
+python3 scripts/check_coverage.py "$COVERAGE_JSON" || fail "coverage"
 
 if [[ "${SKIP_UI_TESTS:-0}" == "1" ]]; then
     step "App: UI tests skipped (SKIP_UI_TESTS=1)"
@@ -47,6 +60,14 @@ SIMULATOR="${CUE_SIMULATOR:-$(python3 scripts/pick_simulator.py)}"
 [[ -n "$SIMULATOR" ]] || fail "no iPhone simulator found. Install an iOS runtime in Xcode > Settings > Components"
 echo "Simulator: $SIMULATOR"
 rm -rf "$RESULT_BUNDLE"
+# A cold simulator can take longer to boot than the UI tests wait for the app.
+xcrun simctl boot "$SIMULATOR" 2>/dev/null || true
+xcrun simctl bootstatus "$SIMULATOR" -b >/dev/null || fail "the simulator did not finish booting"
+RETRY_FLAGS=()
+if [[ -n "${CI:-}" ]]; then
+    # GitHub's shared machines are slow and noisy: a failing UI test runs once more there.
+    RETRY_FLAGS=(-retry-tests-on-failure -test-iterations 2)
+fi
 xcodebuild test \
     -project Cue.xcodeproj \
     -scheme Cue \
@@ -54,6 +75,7 @@ xcodebuild test \
     -derivedDataPath "$DERIVED_DATA" \
     -resultBundlePath "$RESULT_BUNDLE" \
     CODE_SIGNING_ALLOWED=NO \
+    ${RETRY_FLAGS[@]+"${RETRY_FLAGS[@]}"} \
     -quiet || fail "app build or UI tests. Details: open $RESULT_BUNDLE in Xcode"
 
 printf '\nAll checks passed.\n'

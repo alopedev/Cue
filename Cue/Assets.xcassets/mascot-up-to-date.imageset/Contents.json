@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "mascot-up-to-date.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

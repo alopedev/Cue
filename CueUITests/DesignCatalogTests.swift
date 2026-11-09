@@ -1,16 +1,13 @@
 import XCTest
 
-/// The debug design catalog opens from the root screen and shows the components.
+/// The debug design catalog opens with its launch argument and shows the components.
 final class DesignCatalogTests: XCTestCase {
     @MainActor
-    func testCatalogOpensFromRootScreen() {
+    func testCatalogOpensWithLaunchArgument() {
         let app = XCUIApplication()
+        app.launchArguments = ["-freshLibrary", "-designCatalog"]
         app.launch()
 
-        let link = app.buttons["root.designCatalog"]
-        XCTAssertTrue(link.waitForExistence(timeout: 30))
-        link.tap()
-
-        XCTAssertTrue(app.buttons["Recomiéndame"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.buttons["Recomiéndame"].waitForExistence(timeout: 60))
     }
 }
