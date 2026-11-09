@@ -3,7 +3,7 @@ import Foundation
 /// An sRGB color with components between 0 and 1.
 ///
 /// Kept separate from SwiftUI so contrast can be checked in plain tests.
-public struct RGBColor: Equatable, Sendable {
+public struct RGBColor: Hashable, Sendable {
     public let red: Double
     public let green: Double
     public let blue: Double

@@ -19,7 +19,9 @@ struct SampleCatalogTests {
     @Test("Offers series and movies, all listed as popular in the user's country")
     func offersSeriesAndMovies() async throws {
         let items = SampleCatalog.items(now: now)
-        let popular = try await SampleCatalog.provider(now: now, country: SampleData.spain).popular(in: SampleData.spain)
+        let popular = try await SampleCatalog.provider(now: now, country: SampleData.spain).popular(
+            in: SampleData.spain
+        )
         #expect(popular == items)
         #expect(items.filter { if case .series = $0 { true } else { false } }.count == 8)
         #expect(items.filter { if case .movie = $0 { true } else { false } }.count == 6)

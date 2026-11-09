@@ -36,36 +36,84 @@ public enum SampleCatalog {
 
     private static let seriesSpecs: [SeriesSpec] = [
         SeriesSpec(
-            id: 9001, title: "La casa del faro", year: 2025, status: .airing,
-            genres: [Genre.drama, .mystery], runtime: 52, seasons: [8, 8], aired: 12
+            id: 9001,
+            title: "La casa del faro",
+            year: 2025,
+            status: .airing,
+            genres: [Genre.drama, .mystery],
+            runtime: 52,
+            seasons: [8, 8],
+            aired: 12
         ),
         SeriesSpec(
-            id: 9002, title: "Órbita baja", year: 2021, status: .ended,
-            genres: [Genre.sciFiFantasy], runtime: 45, seasons: [6, 6, 6], aired: 18
+            id: 9002,
+            title: "Órbita baja",
+            year: 2021,
+            status: .ended,
+            genres: [Genre.sciFiFantasy],
+            runtime: 45,
+            seasons: [6, 6, 6],
+            aired: 18
         ),
         SeriesSpec(
-            id: 9003, title: "Turno de noche", year: 2024, status: .airing,
-            genres: [Genre.comedy], runtime: 28, seasons: [10, 8], aired: 12
+            id: 9003,
+            title: "Turno de noche",
+            year: 2024,
+            status: .airing,
+            genres: [Genre.comedy],
+            runtime: 28,
+            seasons: [10, 8],
+            aired: 12
         ),
         SeriesSpec(
-            id: 9004, title: "Los archivos de Marta Vidal", year: 2023, status: .canceled,
-            genres: [Genre.crime, .mystery], runtime: 50, seasons: [8], aired: 8
+            id: 9004,
+            title: "Los archivos de Marta Vidal",
+            year: 2023,
+            status: .canceled,
+            genres: [Genre.crime, .mystery],
+            runtime: 50,
+            seasons: [8],
+            aired: 8
         ),
         SeriesSpec(
-            id: 9005, title: "Pan y mantequilla", year: 2019, status: .ended,
-            genres: [Genre.comedy, .family], runtime: 24, seasons: [10, 10], aired: 20
+            id: 9005,
+            title: "Pan y mantequilla",
+            year: 2019,
+            status: .ended,
+            genres: [Genre.comedy, .family],
+            runtime: 24,
+            seasons: [10, 10],
+            aired: 20
         ),
         SeriesSpec(
-            id: 9006, title: "Cordillera", year: 2026, status: .airing,
-            genres: [Genre.drama, .actionAdventure], runtime: 58, seasons: [6], aired: 3
+            id: 9006,
+            title: "Cordillera",
+            year: 2026,
+            status: .airing,
+            genres: [Genre.drama, .actionAdventure],
+            runtime: 58,
+            seasons: [6],
+            aired: 3
         ),
         SeriesSpec(
-            id: 9007, title: "Mareas", year: 2022, status: .ended,
-            genres: [Genre.drama], runtime: 61, seasons: [5], aired: 5
+            id: 9007,
+            title: "Mareas",
+            year: 2022,
+            status: .ended,
+            genres: [Genre.drama],
+            runtime: 61,
+            seasons: [5],
+            aired: 5
         ),
         SeriesSpec(
-            id: 9008, title: "Ciudad dormida", year: 2016, status: .ended,
-            genres: [Genre.crime, .drama], runtime: 42, seasons: [8, 8, 8, 8], aired: 32
+            id: 9008,
+            title: "Ciudad dormida",
+            year: 2016,
+            status: .ended,
+            genres: [Genre.crime, .drama],
+            runtime: 42,
+            seasons: [8, 8, 8, 8],
+            aired: 32
         ),
     ]
 

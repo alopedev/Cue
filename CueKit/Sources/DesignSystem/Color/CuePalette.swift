@@ -32,6 +32,12 @@ public enum CuePalette {
     // Edge under secondary buttons, unselected chips and posters
     public static let softEdge = ThemedColor(light: 0xE3_DCD8, dark: 0x0E_0C12)
 
+    // The character's own colors: illustrations and sample posters only, never interface
+    public static let remote = ThemedColor(both: 0x3B_3644)
+    public static let remoteEdge = ThemedColor(both: 0x2A_2631)
+    public static let peach = ThemedColor(both: 0xFF_C4A6)
+    public static let blush = ThemedColor(both: 0xFF_9E9E)
+
     // Status: always next to a word or an icon, never alone
     public static let success = ThemedColor(light: 0x2F_7A57, dark: 0x7F_D8A8)
     public static let danger = ThemedColor(light: 0xB4_2318, dark: 0xFF_8A7A)
