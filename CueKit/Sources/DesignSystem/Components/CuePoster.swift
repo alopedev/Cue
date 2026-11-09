@@ -178,8 +178,8 @@ private struct PosterMotifDrawing {
         let stars: [(CGFloat, CGFloat, CGFloat)] = [
             (0.8, 0.22, 0.03), (0.68, 0.72, 0.022), (0.16, 0.18, 0.025), (0.88, 0.55, 0.018),
         ]
-        for (x, y, size) in stars {
-            context.fill(circle(CGPoint(x: width * x, y: art * y), width * size), with: .color(secondary))
+        for (left, top, size) in stars {
+            context.fill(circle(CGPoint(x: width * left, y: art * top), width * size), with: .color(secondary))
         }
     }
 }
