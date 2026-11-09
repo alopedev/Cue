@@ -11,13 +11,15 @@ Claude construye la app **por bloques**, siempre **con pruebas primero (TDD)**, 
 | Quién | Qué hace |
 | --- | --- |
 | **Àlex** | Decide lo que no está decidido. Prueba cada bloque en el simulador o en su iPhone. No necesita leer código. |
-| **Claude orquestador** (sesión de Claude Code Desktop en el Mac de Àlex) | Planifica, reparte tareas a los subagentes, revisa su trabajo, pasa las revisiones, abre la PR y la fusiona. |
+| **Claude orquestador** (sesión de Claude Code en el Mac de Àlex) | Planifica, reparte tareas a los subagentes, revisa su trabajo, pasa las revisiones, abre la PR y la fusiona. |
 | **Subagentes** | Cada uno construye una tarea pequeña con TDD y devuelve el resultado al orquestador. |
-| **Proyecto Cue en Claude** (los hilos en la nube) | Planificar, entrevistar y decidir. No construye: desde la nube no se puede compilar ni abrir el simulador. |
+| **Proyecto Cue en Claude** | Planificar, decidir y coordinar. Sus hilos de código se conectan al Mac de Àlex y trabajan allí. En la nube no se construye nada: desde allí no se puede compilar ni abrir el simulador. |
 
 ## Dónde se construye
 
-En el Mac de Àlex (última versión de Xcode), en una sesión **local** de Claude Code Desktop abierta sobre este repo. Así Claude puede compilar, pasar las pruebas y usar el [panel de simulador de iOS](https://code.claude.com/docs/en/desktop-ios-simulator), que solo funciona en sesiones locales.
+En el Mac de Àlex (última versión de Xcode): en una sesión **local** de Claude Code abierta sobre este repo, o en un hilo del proyecto conectado al Mac. Así Claude puede compilar, pasar las pruebas y usar el simulador de iPhone. El [panel de simulador de iOS](https://code.claude.com/docs/en/desktop-ios-simulator) de Claude Desktop solo funciona en sesiones locales.
+
+La sesión tiene que abrirse **dentro de la carpeta del repo**. Si se abre en otra carpeta, la revisión de seguridad (`/security-review`) no arranca.
 
 ## El camino de cada bloque
 
@@ -26,7 +28,7 @@ En el Mac de Àlex (última versión de Xcode), en una sesión **local** de Clau
 3. **Tareas**: el bloque se parte en tareas pequeñas. Cada tarea atraviesa la app de punta a punta (datos, lógica y pantalla) y dice qué otras tareas tienen que acabar antes. Van como issues en GitHub.
 4. **Construcción**: el orquestador da cada tarea a un subagente, que la hace con pruebas primero: escribe una prueba que falla, escribe lo mínimo para que pase, ordena el código, y repite.
 5. **Ronda de calidad y seguridad**: `scripts/verify.sh` en verde, y las revisiones de código (`/code-review`) y de seguridad (`/security-review`) de Claude Code: ¿sigue las normas del repo?, ¿hace lo que pedía la especificación?, ¿hay claves mal guardadas?
-6. **PR**: con capturas del simulador. Claude la fusiona cuando todo está en verde y Àlex prueba el resultado.
+6. **PR**: con capturas del simulador, que Claude adjunta también en su mensaje a Àlex. Claude la fusiona cuando todo está en verde y Àlex prueba el resultado.
 
 Cada 3 o 4 bloques, además, una revisión de arquitectura para que el código no se enrede.
 
@@ -37,6 +39,7 @@ Cada 3 o 4 bloques, además, una revisión de arquitectura para que el código n
 - **La lógica va separada de las pantallas**, en un paquete propio dentro del repo. Así sus pruebas tardan segundos y no necesitan el simulador.
 - **Código en inglés; la app, en castellano.** El glosario `CONTEXT.md` dice cómo se llama cada idea en los dos idiomas (por ejemplo «Esta noche» = `Tonight`).
 - **Subagentes: como mucho 6 a la vez** (decidido el 07/11/2026), y solo en tareas que no tocan los mismos archivos. Motivo: el archivo del proyecto de Xcode se rompe con facilidad si dos agentes lo cambian a la vez, y cada agente extra gasta más uso.
+- **Mínimo de diseño** (pedido por Àlex el 07/11/2026): toda pantalla tiene que verse profesional desde la primera captura. Antes de enseñarla, Claude comprueba que los botones tienen el tamaño correcto y no se estiran, que las rejillas están alineadas, que los elementos del mismo tipo miden lo mismo, que los márgenes son coherentes y que se ve bien en claro, en oscuro y con letra grande.
 - **Una sola orden lo comprueba todo**: `scripts/verify.sh` revisa el formato, las normas de estilo, las pruebas y cuánto código cubren. Tiene que salir en verde antes de cada PR.
 - **Revisión automática en GitHub**: cada PR pasa sola `scripts/verify.sh` en un Mac de GitHub. Si GitHub aún no tiene la versión de Xcode necesaria, se prueba solo en el Mac de Àlex hasta que la tenga.
 - **Las tareas viven en GitHub Issues** del repo, enlazadas entre sí con sus bloqueos.
@@ -45,6 +48,8 @@ Cada 3 o 4 bloques, además, una revisión de arquitectura para que el código n
 - **Claude fusiona las PR** (decidido el 07/11/2026), solo con la revisión de GitHub en verde y sin fallos graves en las revisiones. Si algo sale mal después, se deshace con una PR nueva.
 
 ## Orden de los primeros bloques
+
+Antes del bloque 1 va la **base** (hito H0 del plan): el proyecto y las comprobaciones automáticas, el glosario con los contratos, y el sistema de diseño en código.
 
 1. **Esqueleto y biblioteca con datos de prueba**: crear, ver y marcar series y películas, guardado en el móvil. No necesita claves ni cuentas, y fija el modelo de datos, que es lo que más cuesta cambiar después.
 2. **Buscar títulos reales en TMDB.** Antes hará falta que Àlex cree una clave de TMDB; nunca se guarda en el repo, que es público.

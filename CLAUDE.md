@@ -20,8 +20,8 @@ Eres el **orquestador y revisor**. Repartes el trabajo a subagentes y revisas lo
 5. **Tareas**: parte el bloque en issues pequeños enlazados al de la especificación. Cada tarea atraviesa la app de punta a punta (datos, lógica y pantalla) siempre que se pueda, y dice qué otras tareas tienen que acabar antes.
 6. **Construcción**: cada tarea la construye un subagente con TDD (ver «Pruebas»). Como mucho **6 subagentes a la vez** (decidido el 07/11/2026), cada uno en su worktree, y solo en tareas que no tocan los mismos archivos. Nunca dos subagentes a la vez sobre el archivo del proyecto de Xcode (`.pbxproj`).
 7. **Revisión de cada tarea** al recibirla: las pruebas pasan, hace lo que pide su issue y no añade nada que no se pidió.
-8. **Revisión del bloque**: `scripts/verify.sh` en verde, luego `/code-review` y `/security-review` de Claude Code. Comprueba también que el código cumple «Código» y que el bloque cumple su especificación. Arregla todo lo grave antes de abrir la PR.
-9. La PR lleva capturas del simulador de cada pantalla nueva o cambiada, y una lista corta de qué probar.
+8. **Revisión del bloque**: `scripts/verify.sh` en verde, luego `/code-review` y `/security-review` de Claude Code (la sesión tiene que estar abierta dentro de la carpeta del repo; fuera de ella `/security-review` no arranca). Comprueba también que el código cumple «Código» y que el bloque cumple su especificación. Arregla todo lo grave antes de abrir la PR.
+9. La PR lleva capturas del simulador de cada pantalla nueva o cambiada, y una lista corta de qué probar. Adjunta las mismas capturas en tu mensaje a Àlex: nunca las menciones sin mostrarlas.
 10. **Tú fusionas la PR** (decidido el 07/11/2026), solo cuando la revisión de GitHub está en verde y las revisiones no dejan nada grave. Usa *squash merge* y borra la rama. Después, avisa a Àlex con la lista de qué probar.
 11. Cada 3 o 4 bloques, haz una revisión de arquitectura: busca módulos que se han enredado o que cuesta probar, y propón a Àlex los cambios antes de hacerlos.
 
@@ -43,6 +43,11 @@ Eres el **orquestador y revisor**. Repartes el trabajo a subagentes y revisas lo
 - La lógica vive en un paquete Swift local separado de la app, para que sus pruebas corran sin simulador.
 - Pasa las pruebas del archivo que tocas a menudo, y todas al final de cada tarea.
 
+## Diseño
+
+- Àlex exige calidad profesional desde la primera captura (07/11/2026). Las pantallas se montan con las piezas de `DesignSystem`.
+- Antes de enseñar una pantalla, comprueba: controles con las medidas de Apple (mínimo 44 pt para tocar) que no se estiran para llenar hueco; rejillas alineadas, sin filas cojas; elementos del mismo tipo con el mismo tamaño; márgenes coherentes; bien en claro, en oscuro y con letra grande. Si algo falla, arréglalo antes de enseñarla.
+
 ## Código
 
 - Código, nombres y comentarios en **inglés**. Textos de la app en **castellano**.
@@ -61,4 +66,4 @@ Eres el **orquestador y revisor**. Repartes el trabajo a subagentes y revisas lo
 ## Issues y documentos
 
 - Especificaciones y tareas en GitHub Issues de `alopedev/cue`, con `gh`. Las tareas se enlazan a su especificación y entre sí con los bloqueos nativos de GitHub.
-- Glosario en `CONTEXT.md` y decisiones difíciles de cambiar en `docs/adr/`, ambos en la raíz. Léelos antes de tocar un área; créalos cuando haga falta el primer término o la primera decisión.
+- Glosario en `CONTEXT.md` (en la raíz) y decisiones difíciles de cambiar en `docs/adr/`. Léelos antes de tocar un área; créalos cuando haga falta el primer término o la primera decisión.
