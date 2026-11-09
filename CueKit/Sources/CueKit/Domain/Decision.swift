@@ -3,7 +3,7 @@ import Foundation
 // The "Esta noche" engine's output and the user's answer to it (PRD §4.3, §6).
 
 /// A ranking input of the engine (RF-21, RF-23). Phase 1 signals only.
-public enum Signal: Hashable, Sendable {
+public enum Signal: Hashable, Sendable, Codable {
     case daysSinceLastMarked
     case windowFit
     case imminentEnding
@@ -14,7 +14,7 @@ public enum Signal: Hashable, Sendable {
 }
 
 /// A signal with the value and weight it had when the proposal was issued. Never recalculated.
-public struct WeightedSignal: Hashable, Sendable {
+public struct WeightedSignal: Hashable, Sendable, Codable {
     public let signal: Signal
     public let value: Double
     public let weight: Double
@@ -27,23 +27,23 @@ public struct WeightedSignal: Hashable, Sendable {
 }
 
 /// What is proposed: an episode of a series or a movie.
-public enum ProposedItem: Hashable, Sendable {
+public enum ProposedItem: Hashable, Sendable, Codable {
     case episode(EpisodeReference)
     case movie(MovieID)
 }
 
-public enum ProposalOrigin: Hashable, Sendable {
+public enum ProposalOrigin: Hashable, Sendable, Codable {
     case userList
     case newForYou
 }
 
-public enum ProposalOutcome: Hashable, Sendable {
+public enum ProposalOutcome: Hashable, Sendable, Codable {
     case accepted
     case rejected
     case noResponse
 }
 
-public struct Proposal: Hashable, Sendable, Identifiable {
+public struct Proposal: Hashable, Sendable, Identifiable, Codable {
     public let id: UUID
     public let item: ProposedItem
     public let origin: ProposalOrigin

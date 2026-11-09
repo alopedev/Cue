@@ -1,7 +1,7 @@
 // Identifiers shared by catalog and user entities.
 
 /// TMDB identifier of a series.
-public struct SeriesID: Hashable, Sendable {
+public struct SeriesID: Hashable, Sendable, Codable {
     public let rawValue: Int
 
     public init(_ rawValue: Int) {
@@ -10,7 +10,7 @@ public struct SeriesID: Hashable, Sendable {
 }
 
 /// TMDB identifier of a movie. Series and movie IDs live in separate TMDB namespaces.
-public struct MovieID: Hashable, Sendable {
+public struct MovieID: Hashable, Sendable, Codable {
     public let rawValue: Int
 
     public init(_ rawValue: Int) {
@@ -25,7 +25,7 @@ public enum TitleID: Hashable, Sendable {
 }
 
 /// Points at one episode the way TMDB and Trakt do: series, season and episode number.
-public struct EpisodeReference: Hashable, Sendable {
+public struct EpisodeReference: Hashable, Sendable, Codable {
     public let seriesID: SeriesID
     public let seasonNumber: Int
     public let episodeNumber: Int
