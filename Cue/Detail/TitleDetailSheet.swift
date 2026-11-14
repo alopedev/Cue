@@ -41,13 +41,12 @@ struct TitleDetailSheet: View {
     }
 }
 
-/// Poster, name and the facts of a title, at the top of its sheet.
+/// Poster, name, the facts of a title and the user's status, at the top of its sheet.
 struct DetailHeader: View {
     let title: String
+    /// Short facts such as «2024», «2 temporadas» or «En emisión». Each one says something new.
     let facts: [String]
     let status: String
-    /// A short note next to the status, such as «En emisión».
-    var note: String?
 
     var body: some View {
         HStack(alignment: .top, spacing: CueSpacing.space4) {
@@ -59,25 +58,45 @@ struct DetailHeader: View {
                     .foregroundStyle(CueColor.ink)
                     .fixedSize(horizontal: false, vertical: true)
                     .accessibilityAddTraits(.isHeader)
-                Text(facts.joined(separator: " · "))
-                    .cueTextStyle(.callout)
-                    .foregroundStyle(CueColor.inkMuted)
-                    .fixedSize(horizontal: false, vertical: true)
-                HStack(spacing: CueSpacing.space2) {
-                    StatusPill(text: status)
-                    if let note {
-                        Text(note)
-                            .cueTextStyle(.caption)
-                            .foregroundStyle(CueColor.inkMuted)
-                    }
-                }
-                .padding(.top, CueSpacing.space1)
+                DetailFacts(facts: facts)
+                StatusPill(text: status)
+                    .padding(.top, CueSpacing.space1)
             }
             Spacer(minLength: 0)
         }
         .listRowInsets(EdgeInsets())
         .listRowBackground(Color.clear)
         .padding(.vertical, CueSpacing.space2)
+    }
+}
+
+/// The facts of a title, «2024 · 2 temporadas · En emisión». They break into lines only between
+/// facts, so a line never ends in a loose «·» nor splits a fact in two. First choice that fits:
+/// all on one line; the last fact on a line of its own; one fact per line (large text).
+struct DetailFacts: View {
+    let facts: [String]
+
+    var body: some View {
+        ViewThatFits(in: .horizontal) {
+            lines([facts])
+            if facts.count > 2 { lines([Array(facts.dropLast()), [facts[facts.count - 1]]]) }
+            lines(facts.map { [$0] }, wraps: true)
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(facts.joined(separator: ", "))
+    }
+
+    /// Each group of facts on its own line. Only the last option may wrap inside a fact.
+    private func lines(_ groups: [[String]], wraps: Bool = false) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            ForEach(groups, id: \.self) { group in
+                Text(group.joined(separator: " · "))
+                    .cueTextStyle(.callout)
+                    .foregroundStyle(CueColor.inkMuted)
+                    .lineLimit(wraps ? nil : 1)
+                    .fixedSize(horizontal: !wraps, vertical: true)
+            }
+        }
     }
 }
 
@@ -96,10 +115,12 @@ struct StatusPill: View {
     }
 }
 
-/// A large number with its label, such as the remaining time.
+/// A large number with its label, such as the remaining time. It rolls when the number changes.
 struct DetailStat: View {
     let label: String
     let value: String
+    /// The number behind `value` (minutes, episodes), so the roll goes up or down with it.
+    let number: Int
 
     var body: some View {
         VStack(alignment: .leading, spacing: CueSpacing.space1) {
@@ -111,6 +132,7 @@ struct DetailStat: View {
                 .foregroundStyle(CueColor.ink)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
+                .cueRollingNumber(Double(number))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .combine)

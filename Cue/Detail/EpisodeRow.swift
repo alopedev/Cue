@@ -2,7 +2,7 @@ import CueKit
 import DesignSystem
 import SwiftUI
 
-/// One episode in a series' sheet, with its round check to mark or unmark it.
+/// One episode in a series' sheet. Marked or unmarked with its round check or by swiping the row right.
 struct EpisodeRow: View {
     let episode: Episode
     let isWatched: Bool
@@ -26,6 +26,10 @@ struct EpisodeRow: View {
             }
         }
         .frame(minHeight: 44)
+        // Swiping right is the quick way: a full swipe marks it without aiming at the check.
+        .swipeActions(edge: .leading, allowsFullSwipe: true) {
+            if hasAired { swipeAction }
+        }
         .contextMenu {
             if hasAired {
                 Button(action: markThrough) {
@@ -38,6 +42,18 @@ struct EpisodeRow: View {
         .accessibilityValue(hasAired ? (isWatched ? "visto" : "sin ver") : detail)
         .accessibilityAction(named: isWatched ? "Desmarcar" : "Marcar visto", toggle)
         .accessibilityAction(named: "Marcar hasta aquí", markThrough)
+        .accessibilityIdentifier("episode.\(episode.id.seasonNumber).\(episode.id.episodeNumber)")
+    }
+
+    private var swipeAction: some View {
+        Button(action: toggle) {
+            if isWatched {
+                Label("Desmarcar", systemImage: "arrow.uturn.backward")
+            } else {
+                Label("Visto", systemImage: "checkmark")
+            }
+        }
+        .tint(isWatched ? CueColor.inkMuted : CueColor.cue)
     }
 
     private var detail: String {

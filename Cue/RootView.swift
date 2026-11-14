@@ -10,11 +10,13 @@ struct RootView: View {
     #if DEBUG
         /// Launch with `-designCatalog` to open the design catalog directly (screenshots).
         @State private var showsDesignCatalog = ProcessInfo.processInfo.arguments.contains("-designCatalog")
+        /// True once the sample titles and their marks are all in (see `-sampleLibrary`).
+        @State private var sampleLibraryIsReady = false
     #endif
 
     var body: some View {
         NavigationStack {
-            LibraryScreen(library: library, isSavedOnDevice: isSavedOnDevice)
+            libraryScreen
                 #if DEBUG
                     .navigationDestination(isPresented: $showsDesignCatalog) {
                         DesignSystemCatalog()
@@ -31,7 +33,16 @@ struct RootView: View {
                 if AppDependencies.arguments.contains(AppDependencies.sampleLibraryArgument) {
                     await SampleLibrary.fill(library)
                 }
+                sampleLibraryIsReady = true
             #endif
         }
+    }
+
+    private var libraryScreen: LibraryScreen {
+        #if DEBUG
+            LibraryScreen(library: library, isSavedOnDevice: isSavedOnDevice, opensLaunchTitle: sampleLibraryIsReady)
+        #else
+            LibraryScreen(library: library, isSavedOnDevice: isSavedOnDevice)
+        #endif
     }
 }

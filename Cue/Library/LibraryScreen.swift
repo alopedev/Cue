@@ -6,11 +6,18 @@ import SwiftUI
 struct LibraryScreen: View {
     let library: LibraryModel
     let isSavedOnDevice: Bool
+    #if DEBUG
+        /// Turns true once the library is complete: only then `-openTitle` opens its sheet, so the
+        /// sheet never opens while the grid under it is still filling up.
+        var opensLaunchTitle = false
+    #endif
 
     /// The shelf the user tapped. Until then the screen picks one (see `automaticShelf`).
     @State private var chosenShelf: LibraryShelf?
     @State private var showsAddTitles = false
     @State private var openTitle: OpenTitle?
+    /// Links each poster to its sheet, so the sheet grows out of the poster that was tapped.
+    @Namespace private var posterZoom
 
     var body: some View {
         ScrollView {
@@ -39,6 +46,7 @@ struct LibraryScreen: View {
         }
         .sheet(item: $openTitle) { title in
             TitleDetailSheet(library: library, titleID: title.id)
+                .navigationTransition(.zoom(sourceID: title.id, in: posterZoom))
         }
         // While a sheet is open, the sheet shows these itself, so they never appear twice.
         .safeAreaInset(edge: .bottom) {
@@ -50,7 +58,7 @@ struct LibraryScreen: View {
         }
         .markingFeedback(library)
         #if DEBUG
-            .onChange(of: library.entries.count) { openTitleFromLaunchArguments() }
+            .onChange(of: opensLaunchTitle) { openTitleFromLaunchArguments() }
         #endif
     }
 
@@ -76,7 +84,9 @@ struct LibraryScreen: View {
         if entries.isEmpty {
             ShelfEmptyMessage(shelf: selectedShelf)
         } else {
-            LibraryGrid(entries: entries, library: library) { openTitle = OpenTitle(id: $0) }
+            LibraryGrid(entries: entries, library: library, posterZoom: posterZoom) {
+                openTitle = OpenTitle(id: $0)
+            }
         }
     }
 
@@ -107,7 +117,8 @@ struct LibraryScreen: View {
         /// Launch with `-openTitle "<name>"` to open that title's sheet (screenshots).
         private func openTitleFromLaunchArguments() {
             let arguments = AppDependencies.arguments
-            guard openTitle == nil, let flag = arguments.firstIndex(of: "-openTitle"), flag + 1 < arguments.count,
+            guard opensLaunchTitle, openTitle == nil, let flag = arguments.firstIndex(of: "-openTitle"),
+                flag + 1 < arguments.count,
                 let entry = library.entries.first(where: { $0.title == arguments[flag + 1] })
             else { return }
             openTitle = OpenTitle(id: entry.id)

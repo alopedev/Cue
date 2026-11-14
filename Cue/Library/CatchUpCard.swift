@@ -18,12 +18,14 @@ struct CatchUpCard: View {
                         .foregroundStyle(CueColor.ink)
                         .minimumScaleFactor(0.7)
                         .lineLimit(1)
+                        .cueRollingNumber(Double(minutes))
                     Text(
                         seriesCount == 1
                             ? "con la serie que estás viendo" : "con las \(seriesCount) series que estás viendo"
                     )
                     .cueTextStyle(.caption)
                     .foregroundStyle(CueColor.inkMuted)
+                    .cueRollingNumber(Double(seriesCount))
                 }
                 Spacer(minLength: 0)
                 Image(systemName: "clock")

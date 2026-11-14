@@ -26,6 +26,7 @@ public struct CueChip: View {
                 if let count {
                     Text("\(count)")
                         .monospacedDigit()
+                        .cueRollingNumber(Double(count))
                         .foregroundStyle(isSelected ? CueColor.onCue.opacity(0.8) : CueColor.inkMuted)
                 }
             }
