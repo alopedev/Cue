@@ -19,7 +19,7 @@ struct MovieDetailView: View {
             Section {
                 VStack(alignment: .leading, spacing: CueSpacing.space3) {
                     if let minutes = details.movie.runtimeMinutes {
-                        DetailStat(label: "Duración", value: DurationText.string(minutes: minutes))
+                        DetailStat(label: "Duración", value: DurationText.string(minutes: minutes), number: minutes)
                     }
                     if movie.tracking.status == .watched {
                         Label(watchedText, systemImage: "checkmark.circle.fill")

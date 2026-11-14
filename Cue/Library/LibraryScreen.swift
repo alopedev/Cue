@@ -11,6 +11,8 @@ struct LibraryScreen: View {
     @State private var chosenShelf: LibraryShelf?
     @State private var showsAddTitles = false
     @State private var openTitle: OpenTitle?
+    /// Links each poster to its sheet, so the sheet grows out of the poster that was tapped.
+    @Namespace private var posterZoom
 
     var body: some View {
         ScrollView {
@@ -39,6 +41,7 @@ struct LibraryScreen: View {
         }
         .sheet(item: $openTitle) { title in
             TitleDetailSheet(library: library, titleID: title.id)
+                .navigationTransition(.zoom(sourceID: title.id, in: posterZoom))
         }
         // While a sheet is open, the sheet shows these itself, so they never appear twice.
         .safeAreaInset(edge: .bottom) {
@@ -76,7 +79,9 @@ struct LibraryScreen: View {
         if entries.isEmpty {
             ShelfEmptyMessage(shelf: selectedShelf)
         } else {
-            LibraryGrid(entries: entries, library: library) { openTitle = OpenTitle(id: $0) }
+            LibraryGrid(entries: entries, library: library, posterZoom: posterZoom) {
+                openTitle = OpenTitle(id: $0)
+            }
         }
     }
 

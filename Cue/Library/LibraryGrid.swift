@@ -6,6 +6,8 @@ import SwiftUI
 struct LibraryGrid: View {
     let entries: [LibraryEntry]
     let library: LibraryModel
+    /// Where the open sheet grows from (see `LibraryScreen.posterZoom`).
+    let posterZoom: Namespace.ID
     let open: (TitleID) -> Void
 
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
@@ -24,7 +26,7 @@ struct LibraryGrid: View {
                 Button {
                     open(entry.id)
                 } label: {
-                    LibraryTile(entry: entry)
+                    LibraryTile(entry: entry, posterZoom: posterZoom)
                 }
                 .buttonStyle(TileButtonStyle())
                 .contextMenu { markAction(for: entry) }
@@ -59,11 +61,15 @@ struct LibraryGrid: View {
 /// One title of the grid: poster, name (two lines reserved, so rows stay aligned) and state.
 struct LibraryTile: View {
     let entry: LibraryEntry
+    let posterZoom: Namespace.ID
 
     var body: some View {
         VStack(alignment: .leading, spacing: CueSpacing.space1) {
             CuePoster(title: entry.title)
                 .overlay(alignment: .bottom) { posterBadge.padding(.bottom, CueDepth.soft) }
+                .matchedTransitionSource(id: entry.id, in: posterZoom) { source in
+                    source.clipShape(RoundedRectangle(cornerRadius: CueRadius.small, style: .continuous))
+                }
             Text(entry.title)
                 .font(.subheadline.weight(.bold))
                 .foregroundStyle(CueColor.ink)

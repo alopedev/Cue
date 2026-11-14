@@ -13,8 +13,7 @@ struct SeriesDetailView: View {
                 DetailHeader(
                     title: details.series.title,
                     facts: facts,
-                    status: status,
-                    note: LibraryText.airingStatus(details.series.airingStatus)
+                    status: status
                 )
             }
             Section { nextUp }
@@ -23,11 +22,13 @@ struct SeriesDetailView: View {
                     statsLayout {
                         DetailStat(
                             label: "Episodios por ver",
-                            value: "\(series.progress.remainingEpisodes.count)"
+                            value: "\(series.progress.remainingEpisodes.count)",
+                            number: series.progress.remainingEpisodes.count
                         )
                         DetailStat(
                             label: "Tiempo estimado",
-                            value: DurationText.string(minutes: series.progress.remainingMinutes)
+                            value: DurationText.string(minutes: series.progress.remainingMinutes),
+                            number: series.progress.remainingMinutes
                         )
                     }
                     .padding(.vertical, CueSpacing.space1)
@@ -72,7 +73,9 @@ struct SeriesDetailView: View {
 
     private var facts: [String] {
         [
-            details.series.year.map(String.init), LibraryText.seasons(details.series.seasonCount),
+            details.series.year.map(String.init),
+            LibraryText.seasons(details.series.seasonCount),
+            LibraryText.airingStatus(details.series.airingStatus),
         ].compactMap { $0 }
     }
 
@@ -180,6 +183,7 @@ private struct SeasonHeader: View {
             Spacer()
             Text("\(watched) de \(total)")
                 .monospacedDigit()
+                .cueRollingNumber(Double(watched))
         }
         .font(.footnote.weight(.semibold))
         .foregroundStyle(CueColor.inkMuted)
