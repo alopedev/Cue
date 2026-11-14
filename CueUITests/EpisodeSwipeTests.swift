@@ -13,20 +13,20 @@ final class EpisodeSwipeTests: XCTestCase {
     }
 
     @MainActor
-    func testSwipingAnEpisodeMarksItAndSwipingAgainUnmarksIt() {
-        // Cordillera has episode 1 watched and episode 2 next.
-        let row = app.descendants(matching: .any)["episode.1.2"].firstMatch
+    func testSwipingAnEpisodeUnmarksItAndSwipingAgainMarksIt() {
+        // Cordillera has episode 1 watched. It is the top row, clear of the undo capsule at the bottom.
+        let row = app.descendants(matching: .any)["episode.1.1"].firstMatch
         XCTAssertTrue(row.waitForExistence(timeout: 60))
-        XCTAssertEqual(row.value as? String, "sin ver")
-        // The undo capsule sits over the bottom rows: bring the row up to the middle first.
+        // The sample marks land just after the sheet opens.
+        XCTAssertTrue(waitForValue("visto", of: row))
         app.swipeUp()
+
+        fullSwipeRight(row)
+        XCTAssertTrue(waitForValue("sin ver", of: row))
 
         fullSwipeRight(row)
         XCTAssertTrue(waitForValue("visto", of: row))
         attachScreenshot("swipe-marcado")
-
-        fullSwipeRight(row)
-        XCTAssertTrue(waitForValue("sin ver", of: row))
     }
 
     /// A long swipe across the whole row: it runs the action without tapping the revealed button.
