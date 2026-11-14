@@ -70,29 +70,33 @@ struct DetailHeader: View {
     }
 }
 
-/// The facts of a title on one line, «2024 · 2 temporadas · En emisión». When they do not fit
-/// (large text), one per line: a line never ends in a loose «·» nor splits a fact in two.
+/// The facts of a title, «2024 · 2 temporadas · En emisión». They break into lines only between
+/// facts, so a line never ends in a loose «·» nor splits a fact in two. First choice that fits:
+/// all on one line; the last fact on a line of its own; one fact per line (large text).
 struct DetailFacts: View {
     let facts: [String]
 
     var body: some View {
         ViewThatFits(in: .horizontal) {
-            factText(facts.joined(separator: " · "))
-                .lineLimit(1)
-            VStack(alignment: .leading, spacing: 2) {
-                ForEach(facts, id: \.self) { fact in
-                    factText(fact).fixedSize(horizontal: false, vertical: true)
-                }
-            }
+            lines([facts])
+            if facts.count > 2 { lines([Array(facts.dropLast()), [facts[facts.count - 1]]]) }
+            lines(facts.map { [$0] }, wraps: true)
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(facts.joined(separator: ", "))
     }
 
-    private func factText(_ text: String) -> some View {
-        Text(text)
-            .cueTextStyle(.callout)
-            .foregroundStyle(CueColor.inkMuted)
+    /// Each group of facts on its own line. Only the last option may wrap inside a fact.
+    private func lines(_ groups: [[String]], wraps: Bool = false) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            ForEach(groups, id: \.self) { group in
+                Text(group.joined(separator: " · "))
+                    .cueTextStyle(.callout)
+                    .foregroundStyle(CueColor.inkMuted)
+                    .lineLimit(wraps ? nil : 1)
+                    .fixedSize(horizontal: !wraps, vertical: true)
+            }
+        }
     }
 }
 
