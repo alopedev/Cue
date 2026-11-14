@@ -2,11 +2,11 @@ import XCTest
 
 /// Block 1's main path: add titles, mark, undo and finish a movie (issue #8).
 final class LibraryFlowTests: XCTestCase {
-    private var app: XCUIApplication!
+    @MainActor private let app = XCUIApplication()
 
-    override func setUp() {
+    @MainActor
+    override func setUp() async throws {
         continueAfterFailure = false
-        app = XCUIApplication()
         app.launchArguments = ["-freshLibrary"]
         app.launch()
     }
@@ -75,6 +75,7 @@ final class LibraryFlowTests: XCTestCase {
         snapshot("6-viendo")
     }
 
+    @MainActor
     private func snapshot(_ name: String) {
         let attachment = XCTAttachment(screenshot: app.screenshot())
         attachment.name = name

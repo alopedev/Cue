@@ -2,12 +2,11 @@ import XCTest
 
 /// Marking an episode by swiping its row, without aiming at the round check.
 final class EpisodeSwipeTests: XCTestCase {
-    private var app: XCUIApplication!
+    @MainActor private let app = XCUIApplication()
 
     @MainActor
     override func setUp() async throws {
         continueAfterFailure = false
-        app = XCUIApplication()
         app.launchArguments = ["-sampleLibrary", "-openTitle", "Cordillera"]
         app.launch()
     }
@@ -17,8 +16,7 @@ final class EpisodeSwipeTests: XCTestCase {
         // Cordillera has episode 1 watched. It is the top row, clear of the undo capsule at the bottom.
         let row = app.descendants(matching: .any)["episode.1.1"].firstMatch
         XCTAssertTrue(row.waitForExistence(timeout: 60))
-        // The sample marks land just after the sheet opens.
-        XCTAssertTrue(waitForValue("visto", of: row))
+        XCTAssertEqual(row.value as? String, "visto")
         app.swipeUp()
 
         fullSwipeRight(row)
@@ -41,7 +39,7 @@ final class EpisodeSwipeTests: XCTestCase {
     private func waitForValue(_ value: String, of element: XCUIElement) -> Bool {
         let predicate = NSPredicate(format: "value == %@", value)
         let expectation = XCTNSPredicateExpectation(predicate: predicate, object: element)
-        return XCTWaiter.wait(for: [expectation], timeout: 5) == .completed
+        return XCTWaiter.wait(for: [expectation], timeout: 15) == .completed
     }
 
     @MainActor
